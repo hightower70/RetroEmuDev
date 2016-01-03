@@ -1,0 +1,51 @@
+; ************************
+; * Set compiler options *
+; ************************
+
+; ** Declaration file **
+-cdecl:sysResource.h
+
+; ** Output file **
+-output:sysResource.c
+
+; ** Linker script **
+-linkerscript:linker.xml
+
+; ** Detailed information display
+-verbose
+
+; ***************
+; * Add Bitmaps *
+; ***************
+-bitmap:ArrowLeft.bmp,BMP_ARROW_LEFT
+-bitmap:ArrowRight.bmp,BMP_ARROW_RIGHT
+
+
+; *************
+; * Add Fonts *
+; *************
+-font:himalaya.fna,FNA_HIMALAYA
+-font:lcdfont.fna,FNA_LCD
+-font:dos_font.fna,FNA_DOS
+-font:primo_ascii.fna,FNA_PRIMO
+-font:Leros10x8.fnt,FNA_LEROS
+-font:NiceMono11x14.fna,FNA_NICE_MONO
+
+
+; ***************
+; * Add Strings *
+; ***************
+-string:"Cassette operation",MNU_FAST_CASSETTE
+-string:"Emulation speed",MNU_FULL_SPEED_EMULATION
+-string:"normal",MNU_ENABLED
+-string:"fast",MNU_DISABLED
+
+
+
+; ***************
+; * Add Waves   *
+; ***************
+
+; **************
+; * Add Binary *
+; **************

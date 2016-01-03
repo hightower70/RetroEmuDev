@@ -1,0 +1,85 @@
+; ************************
+; * Set compiler options *
+; ************************
+
+; ** Declaration file **
+-cdecl:fbResource.h
+
+; ** Output file **
+-output:fbResource.c
+
+; ** Linker script **
+-linkerscript:linker.xml
+
+; ** Detailed information display
+-verbose
+
+; ***************
+; * Add Bitmaps *
+; ***************
+-bitmap:file_12_8.bmp,BMP_FILE
+-bitmap:file_audio_12_8.bmp,BMP_AUDIO
+-bitmap:file_music_12_8.bmp,BMP_MUSIC
+-bitmap:up_12_8.bmp,BMP_UP
+-bitmap:folder_12_8.bmp, BMP_FOLDER
+-bitmap:wait_frame_0001.bmp, BMP_PROGRESS1, rgb565rev, 
+-bitmap:wait_frame_0002.bmp, BMP_PROGRESS2, rgb565rev
+-bitmap:wait_frame_0003.bmp, BMP_PROGRESS3, rgb565rev
+-bitmap:wait_frame_0004.bmp, BMP_PROGRESS4, rgb565rev
+-bitmap:wait_frame_0005.bmp, BMP_PROGRESS5, rgb565rev
+-bitmap:wait_frame_0006.bmp, BMP_PROGRESS6, rgb565rev
+-bitmap:wait_frame_0007.bmp, BMP_PROGRESS7, rgb565rev
+-bitmap:wait_frame_0008.bmp, BMP_PROGRESS8, rgb565rev
+-bitmap:wait_frame_0009.bmp, BMP_PROGRESS9, rgb565rev
+-bitmap:wait_frame_0010.bmp, BMP_PROGRESS10, rgb565rev
+-bitmap:wait_frame_0011.bmp, BMP_PROGRESS11, rgb565rev
+-bitmap:wait_frame_0012.bmp, BMP_PROGRESS12, rgb565rev
+-bitmap:wait_frame_0013.bmp, BMP_PROGRESS13, rgb565rev
+-bitmap:wait_frame_0014.bmp, BMP_PROGRESS14, rgb565rev
+-bitmap:wait_frame_0015.bmp, BMP_PROGRESS15, rgb565rev
+-bitmap:wait_frame_0016.bmp, BMP_PROGRESS16, rgb565rev
+-bitmap:wait_frame_0017.bmp, BMP_PROGRESS17, rgb565rev
+-bitmap:wait_frame_0018.bmp, BMP_PROGRESS18, rgb565rev
+-bitmap:wait_frame_0019.bmp, BMP_PROGRESS19, rgb565rev
+-bitmap:wait_frame_0020.bmp, BMP_PROGRESS20, rgb565rev
+-bitmap:wait_frame_0021.bmp, BMP_PROGRESS21, rgb565rev
+-bitmap:wait_frame_0022.bmp, BMP_PROGRESS22, rgb565rev
+-bitmap:wait_frame_0023.bmp, BMP_PROGRESS23, rgb565rev
+-bitmap:wait_frame_0024.bmp, BMP_PROGRESS24, rgb565rev
+-bitmap:wait_frame_0025.bmp, BMP_PROGRESS25, rgb565rev
+-bitmap:wait_frame_0026.bmp, BMP_PROGRESS26, rgb565rev
+-bitmap:wait_frame_0027.bmp, BMP_PROGRESS27, rgb565rev
+-bitmap:wait_frame_0028.bmp, BMP_PROGRESS28, rgb565rev
+-bitmap:wait_frame_0029.bmp, BMP_PROGRESS29, rgb565rev
+-bitmap:wait_frame_0030.bmp, BMP_PROGRESS30, rgb565rev
+-bitmap:wait_frame_0031.bmp, BMP_PROGRESS31, rgb565rev
+
+
+
+; *************
+; * Add Fonts *
+; *************
+-font:himalaya.fna,FNA_HIMALAYA
+-font:lcdfont.fna,FNA_LCD
+-font:dos_font.fna,FNA_DOS
+-font:simple8.fna,FNA_SIMPLE
+-font:primo_ascii.fna,FNA_PRIMO
+-font:Leros10x8.fnt,FNA_LEROS
+-font:NiceMono11x14.fna,FNA_NICE_MONO
+
+
+; ***************
+; * Add Strings *
+; ***************
+
+; ***************
+; * Add Strings *
+; ***************
+
+; ***************
+; * Add Waves   *
+; ***************
+
+; **************
+; * Add Binary *
+; **************

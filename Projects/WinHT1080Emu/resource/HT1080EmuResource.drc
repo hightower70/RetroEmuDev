@@ -1,0 +1,67 @@
+; ************************
+; * Set compiler options *
+; ************************
+
+; ** Declaration file **
+-cdecl:sysResource.h
+
+; ** Output file **
+-output:sysResource.c
+
+; ** Linker script **
+-linkerscript:linker.xml
+
+; ** Detailed information display
+-verbose
+
+; ***************
+; * Add Bitmaps *
+; ***************
+-bitmap:ArrowLeft.bmp,BMP_ARROW_LEFT
+-bitmap:ArrowRight.bmp,BMP_ARROW_RIGHT
+-bitmap:file_12_8.bmp,BMP_FILE
+-bitmap:file_audio_12_8.bmp,BMP_AUDIO
+-bitmap:file_music_12_8.bmp,BMP_MUSIC
+-bitmap:up_12_8.bmp,BMP_UP
+-bitmap:folder_12_8.bmp, BMP_FOLDER
+-bitmap:progress0.bmp, BMP_PROGRESS0
+-bitmap:progress1.bmp, BMP_PROGRESS1
+-bitmap:progress2.bmp, BMP_PROGRESS2
+-bitmap:progress3.bmp, BMP_PROGRESS3
+-bitmap:progress4.bmp, BMP_PROGRESS4
+-bitmap:progress5.bmp, BMP_PROGRESS5
+-bitmap:progress6.bmp, BMP_PROGRESS6
+-bitmap:progress7.bmp, BMP_PROGRESS7
+
+; *************
+; * Add Fonts *
+; *************
+-font:ht_font.fna,FNA_HT1080
+-font:himalaya.fna,FNA_HIMALAYA
+-font:lcdfont.fna,FNA_LCD
+-font:dos_font.fna,FNA_DOS
+-font:primo_ascii.fna,FNA_PRIMO
+-font:Leros10x8.fnt,FNA_LEROS
+-font:NiceMono11x14.fna,FNA_NICE_MONO
+
+; ***************
+; * Add Strings *
+; ***************
+-string:"Emulator configuration",MNU_TITLE
+-string:"Cassette operation",MNU_FAST_CASSETTE
+-string:"Emulation speed",MNU_FULL_SPEED_EMULATION
+-string:"Emulation statistics",MNU_SHOW_EMULATION_STATISTICS
+-string:"normal",MNU_ENABLED
+-string:"fast",MNU_DISABLED
+-string:"hide",MNU_HIDE
+-string:"show",MNU_SHOW
+
+
+
+; ***************
+; * Add Waves   *
+; ***************
+
+; **************
+; * Add Binary *
+; **************

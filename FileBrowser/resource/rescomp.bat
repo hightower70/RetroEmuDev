@@ -1,0 +1,1 @@
+d:\Projects\OBCLinker\bin\Debug\OBCLinker.exe fbResource.drc

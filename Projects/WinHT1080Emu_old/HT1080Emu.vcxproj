@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7FD49DF8-DE54-4B54-ACDD-ECCE77EDE874}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>TRS80Emu</RootNamespace>
+    <ProjectName>HT1080Emu</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\include;..\..\LibOS\include;..\..\LibEmu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\include;..\..\LibOS\include;..\..\LibEmu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\LibEmu\resources\ht1080\ht_s1_basic.c" />
+    <ClCompile Include="..\..\LibEmu\resources\ht1080\ht_s1_basicexpansion.c" />
+    <ClCompile Include="..\..\LibEmu\resources\ht1080\ht_s1_chargen.c" />
+    <ClCompile Include="..\..\LibEmu\resources\ht1080\level1.c" />
+    <ClCompile Include="..\..\LibEmu\resources\ht1080\MODEL1.c" />
+    <ClCompile Include="..\..\LibEmu\source\cpuZ80.c" />
+    <ClCompile Include="..\..\LibEmu\source\hwHT1080.c" />
+    <ClCompile Include="..\..\LibEmu\source\scrHT1080bw.c" />
+    <ClCompile Include="..\..\LibOS\drivers\drvBlackAndWhiteSWRenderer.c" />
+    <ClCompile Include="..\..\LibOS\drivers\drvResourceArray.c" />
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvBlackAndWhiteGraphics.c" />
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvGraphicsDisplayEmulator.c" />
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvHighresTimer.c" />
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvSystemTimer.c" />
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvWinMain.c" />
+    <ClCompile Include="..\..\LibOS\source\fbBlackAndWhiteRenderer.c" />
+    <ClCompile Include="..\..\LibOS\source\fbBuffer.c" />
+    <ClCompile Include="..\..\LibOS\source\fbFileBrowser.c" />
+    <ClCompile Include="..\..\LibOS\source\fbFileEnumeratorWin32.c" />
+    <ClCompile Include="..\..\LibOS\source\fbIconMapper.c" />
+    <ClCompile Include="..\..\LibOS\source\fbUserInputHandler.c" />
+    <ClCompile Include="..\..\LibOS\source\fileUtils.c" />
+    <ClCompile Include="..\..\LibOS\source\guiBlackAndWhiteGraphics.c" />
+    <ClCompile Include="..\..\LibOS\source\guiCommon.c" />
+    <ClCompile Include="..\..\LibOS\source\sysDateTime.c" />
+    <ClCompile Include="..\..\LibOS\source\sysString.c" />
+    <ClCompile Include="..\..\LibOS\source\sysTimer.c" />
+    <ClCompile Include="source\appSettings.c" />
+    <ClCompile Include="source\sysResource.c" />
+    <ClCompile Include="source\sysInitialization.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\LibEmu\include\cpuZ80.h" />
+    <ClInclude Include="..\..\LibEmu\include\emuHT1080.h" />
+    <ClInclude Include="..\..\LibOS\include\drvBlackAndWhiteGraphics.h" />
+    <ClInclude Include="..\..\LibOS\include\drvColorGraphics.h" />
+    <ClInclude Include="..\..\LibOS\include\drvKeyboardScancodeMapper.h" />
+    <ClInclude Include="..\..\LibOS\include\drvMassStorage.h" />
+    <ClInclude Include="..\..\LibOS\include\drvResources.h" />
+    <ClInclude Include="..\..\LibOS\include\fbBuffer.h" />
+    <ClInclude Include="..\..\LibOS\include\fbFileBrowser.h" />
+    <ClInclude Include="..\..\LibOS\include\fbFileEnumerator.h" />
+    <ClInclude Include="..\..\LibOS\include\fbIconMapper.h" />
+    <ClInclude Include="..\..\LibOS\include\fbRenderer.h" />
+    <ClInclude Include="..\..\LibOS\include\fbTypes.h" />
+    <ClInclude Include="..\..\LibOS\include\fileFAT.h" />
+    <ClInclude Include="..\..\LibOS\include\fileSDCard.h" />
+    <ClInclude Include="..\..\LibOS\include\fileStandardFunctions.h" />
+    <ClInclude Include="..\..\LibOS\include\fileTypes.h" />
+    <ClInclude Include="..\..\LibOS\include\fileUtils.h" />
+    <ClInclude Include="..\..\LibOS\include\fileVolumes.h" />
+    <ClInclude Include="..\..\LibOS\include\guiBlackAndWhiteGraphics.h" />
+    <ClInclude Include="..\..\LibOS\include\guiColorGraphics.h" />
+    <ClInclude Include="..\..\LibOS\include\guiCommon.h" />
+    <ClInclude Include="..\..\LibOS\include\guiTypes.h" />
+    <ClInclude Include="..\..\LibOS\include\sysDateTime.h" />
+    <ClInclude Include="..\..\LibOS\include\sysHighresTimer.h" />
+    <ClInclude Include="..\..\LibOS\include\sysString.h" />
+    <ClInclude Include="..\..\LibOS\include\sysTimer.h" />
+    <ClInclude Include="..\..\LibOS\include\sysTypes.h" />
+    <ClInclude Include="..\..\LibOS\include\sysUserInput.h" />
+    <ClInclude Include="..\..\LibOS\include\sysVirtualKeyboardCodes.h" />
+    <ClInclude Include="include\appSettings.h" />
+    <ClInclude Include="include\fbResource.h" />
+    <ClInclude Include="include\sysConfig.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

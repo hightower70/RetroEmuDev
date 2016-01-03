@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="LibOS">
+      <UniqueIdentifier>{e97e1919-f3a6-40c7-a2b5-f446d7e1f81f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibEmu">
+      <UniqueIdentifier>{4dc096d0-0c68-410d-8fef-e4bcd8010306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibOS\drivers">
+      <UniqueIdentifier>{1daaedb6-e88d-44f8-af59-0988f0b1819a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibOS\include">
+      <UniqueIdentifier>{7c8f4bdc-abc8-4c00-899f-d66613b97ad5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibOS\source">
+      <UniqueIdentifier>{249bb3f4-c7b0-4bc6-a091-dbf96e3cb38f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibOS\drivers\win32">
+      <UniqueIdentifier>{18a71e89-94db-42d8-980d-e44bfac07c17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibEmu\include">
+      <UniqueIdentifier>{f916c63a-060f-459c-8be4-0c49d5d1699e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibEmu\source">
+      <UniqueIdentifier>{f8907097-ba61-4370-9df8-826bb5384168}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibEmu\resources">
+      <UniqueIdentifier>{23d52353-05fd-4bd9-96da-8aa3f7a22cf7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvGraphicsDisplayEmulator.c">
+      <Filter>LibOS\drivers\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvHighresTimer.c">
+      <Filter>LibOS\drivers\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvSystemTimer.c">
+      <Filter>LibOS\drivers\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\drvResourceArray.c">
+      <Filter>LibOS\drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\guiCommon.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\sysDateTime.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\sysString.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\sysTimer.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvBlackAndWhiteGraphics.c">
+      <Filter>LibOS\drivers\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\drvBlackAndWhiteSWRenderer.c">
+      <Filter>LibOS\drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\guiBlackAndWhiteGraphics.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\sysInitialization.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbBuffer.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbFileBrowser.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbIconMapper.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbUserInputHandler.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fileUtils.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbBlackAndWhiteRenderer.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\sysResource.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibEmu\source\hwHT1080.c">
+      <Filter>LibEmu\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibEmu\resources\ht1080\ht_s1_basic.c">
+      <Filter>LibEmu\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibEmu\resources\ht1080\ht_s1_basicexpansion.c">
+      <Filter>LibEmu\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibEmu\source\cpuZ80.c">
+      <Filter>LibEmu\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibEmu\resources\ht1080\ht_s1_chargen.c">
+      <Filter>LibEmu\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibEmu\source\scrHT1080bw.c">
+      <Filter>LibEmu\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibEmu\resources\ht1080\MODEL1.c">
+      <Filter>LibEmu\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibEmu\resources\ht1080\level1.c">
+      <Filter>LibEmu\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbFileEnumeratorWin32.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\appSettings.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvWinMain.c">
+      <Filter>LibOS\drivers\win32</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\LibOS\include\drvColorGraphics.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\drvKeyboardScancodeMapper.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\drvMassStorage.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\drvResources.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbBuffer.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbFileBrowser.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbFileEnumerator.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbIconMapper.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbRenderer.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbTypes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileFAT.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileSDCard.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileStandardFunctions.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileTypes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileUtils.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileVolumes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\guiColorGraphics.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\guiCommon.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\guiTypes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysDateTime.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysHighresTimer.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysString.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysTimer.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysTypes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysUserInput.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysVirtualKeyboardCodes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\guiBlackAndWhiteGraphics.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sysConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\drvBlackAndWhiteGraphics.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fbResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibEmu\include\emuHT1080.h">
+      <Filter>LibEmu\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibEmu\include\cpuZ80.h">
+      <Filter>LibEmu\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\appSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

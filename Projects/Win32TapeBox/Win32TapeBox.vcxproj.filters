@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="LibOS">
+      <UniqueIdentifier>{8d74f2e3-b2b3-46bb-965c-d6fe70152619}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TapeBox">
+      <UniqueIdentifier>{6dc3dec9-95a0-4a2f-97b9-24790816de38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibOS\drivers">
+      <UniqueIdentifier>{e5e991fd-c388-4a9f-907a-4e7082067a0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibOS\include">
+      <UniqueIdentifier>{40b47a21-3c87-4e31-8984-202410681bb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibOS\source">
+      <UniqueIdentifier>{e2db5804-6b1b-4f82-b967-035f55fbb817}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TapeBox\include">
+      <UniqueIdentifier>{376f5101-c321-4085-aaeb-43bc1d6c53c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TapeBox\resource">
+      <UniqueIdentifier>{2e29a6b1-35e5-4ed2-9156-3d2ff57d33d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TapeBox\source">
+      <UniqueIdentifier>{9b578713-0e02-44cb-956c-f1d389a1ae8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibOS\drivers\win32">
+      <UniqueIdentifier>{e2a17c6f-6fe6-4d7b-91d9-55ac3e181086}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvColorGraphics.c">
+      <Filter>LibOS\drivers\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvGraphicsDisplayEmulator.c">
+      <Filter>LibOS\drivers\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvHighresTimer.c">
+      <Filter>LibOS\drivers\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvSystemTimer.c">
+      <Filter>LibOS\drivers\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvWavePlayer.c">
+      <Filter>LibOS\drivers\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\drvColorGraphicsSWRenderer.c">
+      <Filter>LibOS\drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\drivers\drvResourceArray.c">
+      <Filter>LibOS\drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbBuffer.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbColorRenderer.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbFileBrowser.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbIconMapper.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbUserInputHandler.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fileUtils.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\guiColorGraphics.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\guiCommon.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\sysDateTime.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\sysString.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\sysTimer.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TapeBox\source\sysInitialization.c">
+      <Filter>TapeBox\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fbFileEnumeratorWin32.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\fileWave.c">
+      <Filter>LibOS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TapeBox\source\appWavePlayer.c">
+      <Filter>TapeBox\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TapeBox\source\appTapeBox.c">
+      <Filter>TapeBox\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TapeBox\resource\sysResource.c">
+      <Filter>TapeBox\resource</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\LibOS\include\drvBlackAndWhiteGraphics.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\drvColorGraphics.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\drvKeyboardScancodeMapper.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\drvMassStorage.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\drvResources.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\drvWavePlayer.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbBuffer.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbFileBrowser.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbFileEnumerator.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbIconMapper.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbRenderer.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fbTypes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileFAT.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileSDCard.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileStandardFunctions.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileTypes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileUtils.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileVolumes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\guiBlackAndWhiteGraphics.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\guiColorGraphics.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\guiCommon.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\guiTypes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysDateTime.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysHighresTimer.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysPackEnd.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysPackStart.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysString.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysTimer.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysTypes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysUserInput.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\sysVirtualKeyboardCodes.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\waveMixer.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\TapeBox\include\sysConfig.h">
+      <Filter>TapeBox\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\LibOS\include\fileWave.h">
+      <Filter>LibOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\TapeBox\include\appTapeBox.h">
+      <Filter>TapeBox\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\TapeBox\resource\sysResource.h">
+      <Filter>TapeBox\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\TapeBox\include\appWavePlayer.h">
+      <Filter>TapeBox\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

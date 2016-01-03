@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>../include/emuInvadersResource.h</itemPath>
+      <itemPath>../include/sysConfig.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="f1" displayName="LibEMU" projectFiles="true">
+      <logicalFolder name="f1" displayName="include" projectFiles="true">
+        <itemPath>../../../LibEmu/include/cpuI8080.h</itemPath>
+        <itemPath>../../../LibEmu/include/emuInvaders.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f2" displayName="source" projectFiles="true">
+        <itemPath>../../../LibEmu/source/cpuI8080.c</itemPath>
+        <itemPath>../../../LibEmu/source/hwInvaders.c</itemPath>
+        <itemPath>../../../LibEmu/source/scrInvaders16bpp.c</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="f2" displayName="LibOS" projectFiles="true">
+      <logicalFolder name="f1" displayName="drivers" projectFiles="true">
+        <logicalFolder name="f1" displayName="USB" projectFiles="true">
+          <itemPath>../../../LibOS/drivers/PIC32/usb/usb_config.c</itemPath>
+          <itemPath>../../../LibOS/drivers/PIC32/usb/usb_host.c</itemPath>
+          <itemPath>../../../LibOS/drivers/PIC32/usb/usb_host_hid.c</itemPath>
+          <itemPath>../../../LibOS/drivers/PIC32/usb/usb_host_hid_device.c</itemPath>
+          <itemPath>../../../LibOS/drivers/PIC32/usb/usb_host_hid_parser.c</itemPath>
+        </logicalFolder>
+        <itemPath>../../../LibOS/drivers/PIC32/source/drvPMP8.c</itemPath>
+        <itemPath>../../../LibOS/drivers/PIC32/source/drvSystemTimer.c</itemPath>
+        <itemPath>../../../LibOS/drivers/PIC32/source/drvUSBHIDHost.c</itemPath>
+        <itemPath>../../../LibOS/drivers/drvILI9320.c</itemPath>
+        <itemPath>../../../LibOS/drivers/drvKeyboardScancodeMapper.c</itemPath>
+        <itemPath>../../../LibOS/drivers/drvResourceArray.c</itemPath>
+        <itemPath>../../../LibOS/drivers/PIC32/source/drvWavePlayerPWM.c</itemPath>
+        <itemPath>../../../LibOS/drivers/PIC32/source/drvHighresTimer.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f2" displayName="include" projectFiles="true">
+        <itemPath>../../../LibOS/include/drvBlackAndWhiteGraphics.h</itemPath>
+        <itemPath>../../../LibOS/include/drvColorGraphics.h</itemPath>
+        <itemPath>../../../LibOS/include/drvKeyboardScancodeMapper.h</itemPath>
+        <itemPath>../../../LibOS/include/drvMassStorage.h</itemPath>
+        <itemPath>../../../LibOS/include/drvResources.h</itemPath>
+        <itemPath>../../../LibOS/include/drvWavePlayer.h</itemPath>
+        <itemPath>../../../LibOS/include/fbBuffer.h</itemPath>
+        <itemPath>../../../LibOS/include/fbFileBrowser.h</itemPath>
+        <itemPath>../../../LibOS/include/fbFileEnumerator.h</itemPath>
+        <itemPath>../../../LibOS/include/fbIconMapper.h</itemPath>
+        <itemPath>../../../LibOS/include/fbRenderer.h</itemPath>
+        <itemPath>../../../LibOS/include/fbTypes.h</itemPath>
+        <itemPath>../../../LibOS/include/fileFAT.h</itemPath>
+        <itemPath>../../../LibOS/include/fileSDCard.h</itemPath>
+        <itemPath>../../../LibOS/include/fileStandardFunctions.h</itemPath>
+        <itemPath>../../../LibOS/include/fileTypes.h</itemPath>
+        <itemPath>../../../LibOS/include/fileUtils.h</itemPath>
+        <itemPath>../../../LibOS/include/fileVolumes.h</itemPath>
+        <itemPath>../../../LibOS/include/guiBlackAndWhiteGraphics.h</itemPath>
+        <itemPath>../../../LibOS/include/guiColorGraphics.h</itemPath>
+        <itemPath>../../../LibOS/include/guiCommon.h</itemPath>
+        <itemPath>../../../LibOS/include/guiTypes.h</itemPath>
+        <itemPath>../../../LibOS/include/sysDateTime.h</itemPath>
+        <itemPath>../../../LibOS/include/sysHighresTimer.h</itemPath>
+        <itemPath>../../../LibOS/include/sysPackEnd.h</itemPath>
+        <itemPath>../../../LibOS/include/sysPackStart.h</itemPath>
+        <itemPath>../../../LibOS/include/sysString.h</itemPath>
+        <itemPath>../../../LibOS/include/sysTimer.h</itemPath>
+        <itemPath>../../../LibOS/include/sysTypes.h</itemPath>
+        <itemPath>../../../LibOS/include/sysUserInput.h</itemPath>
+        <itemPath>../../../LibOS/include/sysVirtualKeyboardCodes.h</itemPath>
+        <itemPath>../../../LibOS/include/waveMixer.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f3" displayName="source" projectFiles="true">
+        <itemPath>../../../LibOS/source/guiColorGraphics.c</itemPath>
+        <itemPath>../../../LibOS/source/guiCommon.c</itemPath>
+        <itemPath>../../../LibOS/source/sysString.c</itemPath>
+        <itemPath>../../../LibOS/source/sysTimer.c</itemPath>
+        <itemPath>../../../LibOS/source/waveMixer.c</itemPath>
+        <itemPath>../../../LibOS/source/sysHighResTimer.c</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="LinkerScript"
+                   displayName="Linker Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>../source/main.c</itemPath>
+      <itemPath>../source/sysInitialization.c</itemPath>
+      <itemPath>../source/emuInvadersResource.c</itemPath>
+      <itemPath>../source/romInvaders.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../LibOS/source</Elem>
+    <Elem>../../../LibOS/include</Elem>
+    <Elem>../../../LibEmu/source</Elem>
+    <Elem>../../../LibEmu/include</Elem>
+    <Elem>../source</Elem>
+    <Elem>../include</Elem>
+    <Elem>../../../LibOS/drivers</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="default" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <targetDevice>PIC32MX795F512L</targetDevice>
+        <targetHeader></targetHeader>
+        <targetPluginBoard></targetPluginBoard>
+        <platformTool>SKDEPIC32PlatformTool</platformTool>
+        <languageToolchain>XC32</languageToolchain>
+        <languageToolchainVersion>1.31</languageToolchainVersion>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+        <archiverTool>
+        </archiverTool>
+        <loading>
+          <useAlternateLoadableFile>false</useAlternateLoadableFile>
+          <parseOnProdLoad>false</parseOnProdLoad>
+          <alternateLoadableFile></alternateLoadableFile>
+        </loading>
+      </compileType>
+      <makeCustomizationType>
+        <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeCustomizationPreStep></makeCustomizationPreStep>
+        <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
+        <makeCustomizationPostStep></makeCustomizationPostStep>
+        <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
+        <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
+        <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
+      </makeCustomizationType>
+      <C32>
+        <property key="additional-warnings" value="false"/>
+        <property key="enable-app-io" value="false"/>
+        <property key="enable-omit-frame-pointer" value="false"/>
+        <property key="enable-symbols" value="true"/>
+        <property key="enable-unroll-loops" value="false"/>
+        <property key="exclude-floating-point" value="false"/>
+        <property key="extra-include-directories"
+                  value="..\..\..\LibOS\include;..\..\..\LibEmu\include;..\include;..\..\..\LibOS\drivers\PIC32\include"/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="isolate-each-function" value="false"/>
+        <property key="make-warnings-into-errors" value="false"/>
+        <property key="optimization-level" value="-O3"/>
+        <property key="place-data-into-section" value="false"/>
+        <property key="post-instruction-scheduling" value="default"/>
+        <property key="pre-instruction-scheduling" value="default"/>
+        <property key="preprocessor-macros" value="_SUPPRESS_PLIB_WARNING"/>
+        <property key="strict-ansi" value="false"/>
+        <property key="support-ansi" value="false"/>
+        <property key="use-cci" value="false"/>
+        <property key="use-iar" value="false"/>
+        <property key="use-indirect-calls" value="false"/>
+      </C32>
+      <C32-AR>
+        <property key="additional-options-chop-files" value="false"/>
+      </C32-AR>
+      <C32-AS>
+      </C32-AS>
+      <C32-LD>
+        <property key="additional-options-use-response-files" value="false"/>
+        <property key="enable-check-sections" value="false"/>
+        <property key="exclude-floating-point-library" value="false"/>
+        <property key="exclude-standard-libraries" value="false"/>
+        <property key="extra-lib-directories" value=""/>
+        <property key="fill-flash-options-addr" value=""/>
+        <property key="fill-flash-options-const" value=""/>
+        <property key="fill-flash-options-how" value="0"/>
+        <property key="fill-flash-options-inc-const" value="1"/>
+        <property key="fill-flash-options-increment" value=""/>
+        <property key="fill-flash-options-seq" value=""/>
+        <property key="fill-flash-options-what" value="0"/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-cross-reference-file" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="heap-size" value="8192"/>
+        <property key="input-libraries" value=""/>
+        <property key="linker-symbols" value=""/>
+        <property key="map-file" value="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
+        <property key="no-startup-files" value="false"/>
+        <property key="oXC32ld-extra-opts" value=""/>
+        <property key="optimization-level" value=""/>
+        <property key="preprocessor-macros" value=""/>
+        <property key="remove-unused-sections" value="false"/>
+        <property key="report-memory-usage" value="false"/>
+        <property key="stack-size" value=""/>
+        <property key="symbol-stripping" value=""/>
+        <property key="trace-symbols" value=""/>
+        <property key="warn-section-align" value="false"/>
+      </C32-LD>
+      <C32CPP>
+        <property key="additional-warnings" value="false"/>
+        <property key="check-new" value="false"/>
+        <property key="eh-specs" value="true"/>
+        <property key="enable-app-io" value="false"/>
+        <property key="enable-omit-frame-pointer" value="false"/>
+        <property key="enable-symbols" value="true"/>
+        <property key="enable-unroll-loops" value="false"/>
+        <property key="exceptions" value="true"/>
+        <property key="exclude-floating-point" value="false"/>
+        <property key="extra-include-directories" value=""/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="isolate-each-function" value="false"/>
+        <property key="make-warnings-into-errors" value="false"/>
+        <property key="optimization-level" value=""/>
+        <property key="place-data-into-section" value="false"/>
+        <property key="post-instruction-scheduling" value="default"/>
+        <property key="pre-instruction-scheduling" value="default"/>
+        <property key="preprocessor-macros" value=""/>
+        <property key="rtti" value="true"/>
+        <property key="strict-ansi" value="false"/>
+        <property key="use-cci" value="false"/>
+        <property key="use-iar" value="false"/>
+        <property key="use-indirect-calls" value="false"/>
+      </C32CPP>
+      <C32Global>
+        <property key="common-include-directories" value=""/>
+        <property key="gp-relative-option" value=""/>
+        <property key="legacy-libc" value="false"/>
+        <property key="save-temps" value="false"/>
+        <property key="wpo-lto" value="false"/>
+      </C32Global>
+      <SKDEPIC32PlatformTool>
+        <property key="whatToProgram" value="all"/>
+      </SKDEPIC32PlatformTool>
+    </conf>
+  </confs>
+</configurationDescriptor>
