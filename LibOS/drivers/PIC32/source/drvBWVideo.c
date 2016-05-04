@@ -44,8 +44,8 @@
 #define videoVERTICAL_RESOLUTION guiSCREEN_HEIGHT
 #define videoBORDER_WIDTH_IN_PIXEL 25
 
-#define videoTIMER_FREQUENCY sysPBLCK_FREQUENCY // input clock frequency of the video timer
-#define videoCLOCK_FREQUENCY sysPBLCK_FREQUENCY // input clock frequency of the video pixel clock generator
+#define videoTIMER_FREQUENCY sysPBCLK_FREQUENCY // input clock frequency of the video timer
+#define videoCLOCK_FREQUENCY sysPBCLK_FREQUENCY // input clock frequency of the video pixel clock generator
 
 
 // Video timing constants
@@ -110,12 +110,12 @@
 #define videoPIXEL_START_BYTES (videoPIXEL_CLOCK / videoNANOSEC_TO_MICROSEC_DIVISOR * videoPIXEL_START / videoMICROSEC_DIVISOR / 8)
 
 // pixel stop position in ns
-//#define videoPIXEL_STOP (videoPIXEL_START + ((videoHORIZONTAL_RESOLUTION + 10)* videoPIXEL_CLOCK_DIVISOR * 1000 / (videoCLOCK_FREQUENCY / videoMICROSEC_DIVISOR)))
+#define videoPIXEL_STOP (videoPIXEL_START + ((videoHORIZONTAL_RESOLUTION + 10)* videoPIXEL_CLOCK_DIVISOR * 1000 / (videoCLOCK_FREQUENCY / videoMICROSEC_DIVISOR)))
 
 // pixel start position in video timer cycle
-//#define videoPIXEL_START_CYCLE (ROUNDDIV(videoTIMER_FREQUENCY / videoMICROSEC_DIVISOR * videoPIXEL_START, 1000))
+#define videoPIXEL_START_CYCLE (ROUNDDIV(videoTIMER_FREQUENCY / videoMICROSEC_DIVISOR * videoPIXEL_START, 1000))
 // pixel stop position in timer cycle
-//#define videoPIXEL_STOP_CYCLE (ROUNDDIV(videoTIMER_FREQUENCY / videoMICROSEC_DIVISOR * videoPIXEL_STOP, 1000)-10)
+#define videoPIXEL_STOP_CYCLE (ROUNDDIV(videoTIMER_FREQUENCY / videoMICROSEC_DIVISOR * videoPIXEL_STOP, 1000)-10)
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ void drvGraphicsInitialize( void)
 	// clear video memory
 	for( y=0; y<videoVERTICAL_RESOLUTION; y++)
 		for (x=0; x<videoHORIZONTAL_RESOLUTION/8; x++)
-			g_gui_frame_buffer[y*videoHORIZONTAL_RESOLUTION/8 + x]= 0;
+			g_gui_frame_buffer[y*videoHORIZONTAL_RESOLUTION/8 + x]= 0x55;
 
   // Init vertical sync state machine
   l_video_state = VS_LINE;
@@ -170,10 +170,13 @@ void drvGraphicsInitialize( void)
 	// Open output compare for sync generation
 	OpenOC3( OC_ON | OC_TIMER3_SRC | OC_CONTINUE_PULSE, 0, videoSYNC_CYCLE);
 
+	// Open output compare for pixel start generation
+  OpenOC1( OC_ON | OC_TIMER3_SRC | OC_CONTINUE_PULSE, 0, videoSYNC_CYCLE);
+
+
 	// Initialize timer for video signal generation
 	OpenTimer3(T3_ON | T3_PS_1_1 | T3_SOURCE_INT, videoHORIZONTAL_SYNC_DIVISOR-1);
 	ConfigIntTimer3(T3_INT_ON | T3_INT_PRIOR_7 | T3_INT_SUB_PRIOR_0);
-
 }
 
 void guiGraphicsUpdateCanvas( uint16_t in_left, uint16_t in_top, uint16_t in_right, uint16_t in_bottom )
@@ -196,6 +199,7 @@ void __ISR(_TIMER_3_VECTOR, ipl7srs) T3Interrupt( void)
 
 				// vertical sync pulse
 				OC3R = videoHORIZONTAL_SYNC_DIVISOR - videoSYNC_CYCLE - videoBACK_PORCH_CYCLE;
+				OC1R = videoHORIZONTAL_SYNC_DIVISOR - videoSYNC_CYCLE - videoBACK_PORCH_CYCLE;
 				break;
 
 			case VS_SYNC:   // 1
@@ -204,6 +208,7 @@ void __ISR(_TIMER_3_VECTOR, ipl7srs) T3Interrupt( void)
 
 				// horizontal sync pulse
 				OC3R = videoSYNC_CYCLE;
+				OC1R = videoSYNC_CYCLE;
 				break;
 
 			case VS_POSTEQ: // 2

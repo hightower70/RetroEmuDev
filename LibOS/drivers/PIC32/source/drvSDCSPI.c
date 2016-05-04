@@ -1,4 +1,6 @@
-#include "sysConfig.h"
+#include <sysTypes.h>
+#include <plib.h>
+#include <sysConfig.h>
 
 /*****************************************************************************/
 /* Constants                                                                 */
@@ -20,7 +22,6 @@
 #define __SD_SPI_INT_VECTOR(spi_index)       INT_SPI_ ## spi_index ## _VECTOR
 #define _SD_SPI_INT_VECTOR(spi_index) __SD_SPI_INT_VECTOR(spi_index)
 #define SD_SPI_INT_VECTOR _SD_SPI_INT_VECTOR(GLCD_SPI_CHANNEL)
-
 
 #define drvSPI1A_CONF		0x8120	// SPI on, 8-bit master,CKE=1,CKP=0
 #define drvSPI1A_BAUD		SpiBrgVal(sysPBCLK_FREQUENCY, 400000)

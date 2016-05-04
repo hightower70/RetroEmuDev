@@ -523,6 +523,7 @@ int cpuExecute(register cpuZ80State *R,register int in_cycles_requested)
 {
   register uint8_t I;
   register pair J;
+	int cycles_executed;
 
 	R->ICount = 0;
 	R->ICyclesRequested = in_cycles_requested;
@@ -540,6 +541,17 @@ int cpuExecute(register cpuZ80State *R,register int in_cycles_requested)
 		I=OpZ80(R->PC.W++);				// Read opcode
 		R->ICount+=Cycles[I];			// Count cycles
 
+		if (R->PC.W == 0x0244)
+		{
+			R->PC.W = 0x0244;
+			R->PC.W = 0x0244;
+		}
+
+		if (R->PC.W == 0x0260)
+		{
+			R->PC.W = 0x0260;
+		}
+
     // Interpret opcode
     switch(I)
     {
@@ -554,7 +566,11 @@ int cpuExecute(register cpuZ80State *R,register int in_cycles_requested)
   /* Unless we have come here after EI, exit */
 	if (!(R->IFF&IFF_EI))
 	{
-		return(R->ICount);
+		cycles_executed = R->ICount;
+
+		R->ICount = 0;
+
+		return cycles_executed;
 	}
   else
   {
@@ -568,7 +584,11 @@ int cpuExecute(register cpuZ80State *R,register int in_cycles_requested)
 		}
   }
 
-	return R->ICount;
+	cycles_executed = R->ICount;
+
+	R->ICount = 0;
+
+	return cycles_executed;
 }
 
 /** IntZ80() *************************************************/

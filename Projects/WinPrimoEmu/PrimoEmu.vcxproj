@@ -142,6 +142,77 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\LibEmu\source\cpuZ80.c" />
+    <ClCompile Include="..\..\LibOS\drivers\drvBlackAndWhiteSWRenderer.c" />
+    <ClCompile Include="..\..\LibOS\drivers\drvResourceArray.c" />
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvBlackAndWhiteGraphics.c" />
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvGraphicsDisplayEmulator.c" />
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvHighresTimer.c" />
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvSystemTimer.c" />
+    <ClCompile Include="..\..\LibOS\drivers\Win32\drvWinMain.c" />
+    <ClCompile Include="..\..\LibOS\source\fbBlackAndWhiteRenderer.c" />
+    <ClCompile Include="..\..\LibOS\source\fbBuffer.c" />
+    <ClCompile Include="..\..\LibOS\source\fbFileBrowser.c" />
+    <ClCompile Include="..\..\LibOS\source\fbFileEnumeratorWin32.c" />
+    <ClCompile Include="..\..\LibOS\source\fbUserInputHandler.c" />
+    <ClCompile Include="..\..\LibOS\source\fileUtils.c" />
+    <ClCompile Include="..\..\LibOS\source\gcmBlackAndWhiteRenderer.c" />
+    <ClCompile Include="..\..\LibOS\source\gcmGraphicsConfigMenu.c" />
+    <ClCompile Include="..\..\LibOS\source\gcmUserInputHandler.c" />
+    <ClCompile Include="..\..\LibOS\source\guiBlackAndWhiteGraphics.c" />
+    <ClCompile Include="..\..\LibOS\source\guiCommon.c" />
+    <ClCompile Include="..\..\LibOS\source\sysDateTime.c" />
+    <ClCompile Include="..\..\LibOS\source\sysString.c" />
+    <ClCompile Include="..\..\LibOS\source\sysTimer.c" />
+    <ClCompile Include="source\appGUI.c" />
+    <ClCompile Include="source\appSettings.c" />
+    <ClCompile Include="source\appTaskSwitcher.c" />
+    <ClCompile Include="source\fbIconMapper.c" />
+    <ClCompile Include="source\sysInitialization.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\LibEmu\include\cpuZ80.h" />
+    <ClInclude Include="..\..\LibEmu\include\emuPrimo.h" />
+    <ClInclude Include="..\..\LibOS\include\cpCodePages.h" />
+    <ClInclude Include="..\..\LibOS\include\drvBlackAndWhiteGraphics.h" />
+    <ClInclude Include="..\..\LibOS\include\drvColorGraphics.h" />
+    <ClInclude Include="..\..\LibOS\include\drvKeyboardScancodeMapper.h" />
+    <ClInclude Include="..\..\LibOS\include\drvMassStorage.h" />
+    <ClInclude Include="..\..\LibOS\include\drvResources.h" />
+    <ClInclude Include="..\..\LibOS\include\drvWavePlayer.h" />
+    <ClInclude Include="..\..\LibOS\include\fbBuffer.h" />
+    <ClInclude Include="..\..\LibOS\include\fbFileBrowser.h" />
+    <ClInclude Include="..\..\LibOS\include\fbFileEnumerator.h" />
+    <ClInclude Include="..\..\LibOS\include\fbIconMapper.h" />
+    <ClInclude Include="..\..\LibOS\include\fbRenderer.h" />
+    <ClInclude Include="..\..\LibOS\include\fbTypes.h" />
+    <ClInclude Include="..\..\LibOS\include\fileFAT.h" />
+    <ClInclude Include="..\..\LibOS\include\fileSDCard.h" />
+    <ClInclude Include="..\..\LibOS\include\fileStandardFunctions.h" />
+    <ClInclude Include="..\..\LibOS\include\fileTypes.h" />
+    <ClInclude Include="..\..\LibOS\include\fileUtils.h" />
+    <ClInclude Include="..\..\LibOS\include\fileVolumes.h" />
+    <ClInclude Include="..\..\LibOS\include\fileWave.h" />
+    <ClInclude Include="..\..\LibOS\include\gcmGraphicsConfigMenu.h" />
+    <ClInclude Include="..\..\LibOS\include\gcmRenderer.h" />
+    <ClInclude Include="..\..\LibOS\include\guiBlackAndWhiteGraphics.h" />
+    <ClInclude Include="..\..\LibOS\include\guiColorGraphics.h" />
+    <ClInclude Include="..\..\LibOS\include\guiCommon.h" />
+    <ClInclude Include="..\..\LibOS\include\guiTypes.h" />
+    <ClInclude Include="..\..\LibOS\include\sysDateTime.h" />
+    <ClInclude Include="..\..\LibOS\include\sysHighresTimer.h" />
+    <ClInclude Include="..\..\LibOS\include\sysPackEnd.h" />
+    <ClInclude Include="..\..\LibOS\include\sysPackStart.h" />
+    <ClInclude Include="..\..\LibOS\include\sysString.h" />
+    <ClInclude Include="..\..\LibOS\include\sysTimer.h" />
+    <ClInclude Include="..\..\LibOS\include\sysTypes.h" />
+    <ClInclude Include="..\..\LibOS\include\sysUserInput.h" />
+    <ClInclude Include="..\..\LibOS\include\sysVirtualKeyboardCodes.h" />
+    <ClInclude Include="..\..\LibOS\include\waveMixer.h" />
+    <ClInclude Include="include\appConfigMenu.h" />
+    <ClInclude Include="include\appGUI.h" />
+    <ClInclude Include="include\appSettings.h" />
+    <ClInclude Include="include\sysConfig.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

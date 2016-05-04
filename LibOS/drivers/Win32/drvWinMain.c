@@ -15,6 +15,7 @@
 void sysInitialization(void);
 void drvGraphicsCleanUp(void);
 void sysCleanup(void);
+void sysMainTask(void);
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {

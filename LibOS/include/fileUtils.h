@@ -6,6 +6,8 @@
 #include <sysString.h>
 #include <fileTypes.h>
 
+#define fileUTIL_MAX_FILENAME_LENGTH 256
+
 ///////////////////////////////////////////////////////////////////////////////
 // Function prototypes
 sysString fileGetFileNameExtension(sysString in_file_name);

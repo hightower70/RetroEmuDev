@@ -1,15 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?><project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/source/cpWin1250.c</file>
-        <file>file:/D:/Projects/STM32F429/FileBrowser/Projects/PIC32Homelab/source/sysInitialization.c</file>
-        <file>file:/D:/Projects/STM32F429/FileBrowser/Projects/PIC32Homelab/source/main.c</file>
-        <file>file:/D:/Projects/STM32F429/FileBrowser/Projects/PIC32Homelab/source/appSettings.c</file>
-        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/source/guiBlackAndWhiteGraphics.c</file>
-        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/drivers/drvBlackAndWhiteSWRenderer.c</file>
-        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/include/drvBlackAndWhiteGraphics.h</file>
-        <file>file:/D:/Projects/STM32F429/FileBrowser/Projects/PIC32Homelab/include/sysConfig.h</file>
-        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/drivers/PIC32/source/drvBWVideo.c</file>
-        <file>file:/D:/Projects/STM32F429/FileBrowser/LibEmu/source/hwHomeLab.c</file>
-    </open-files>
 </project-private>

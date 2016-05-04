@@ -21,7 +21,7 @@
 #include <sysConfig.h>
 #include <sysTimer.h>
 #include <appSettings.h>
-
+#include <cpCodePages.h>
 #include <fbFileBrowser.h>
 
 /*****************************************************************************/
@@ -94,7 +94,8 @@ static uint32_t l_total_cpu_cycles;
 static int32_t l_current_cycles_per_frame;
 static int l_current_scanline;
 
-static sysHighresTimestamp l_current_timestamp;
+static sysHighresTimestamp l_frame_start_timestamp;
+static uint32_t l_current_scanline_time;
 
 // port mirror variables
 static uint8_t l_out_port_ff = 0;
@@ -109,56 +110,32 @@ static uint32_t l_cas_clock_timestamp;
 static bool l_cas_motor_on = false;
 
 // emulation speed variables
-static sysTimeStamp l_emulation_speed_timestamp;
 static uint32_t l_emulation_speed_cpu_cycles;
 static uint32_t l_emulation_speed_vsync_cycles;
-static uint16_t l_emulation_speed_cpu_freq;
-static uint16_t l_emulation_speed_vsync_freq;
+uint16_t g_emulation_speed_cpu_freq;
+uint16_t g_emulation_speed_vsync_freq;
+
+// screean area refresh disable array
+uint8_t g_screen_no_refresh_area[emuHT1080_VIDEO_RAM_SIZE];
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Initializes HT1080Z Computer
-void emuHT1080Initialize(void)
+void emuInitialize(void)
 {
-	uint16_t i;
-
-  // Reset CPU
-	cpuReset(&l_cpu);
-  
-  // Clears RAM
-  for(i = 0; i < emuHT1080_RAM_SIZE; i++)
-		g_ram[i] = 0;
-
-	for (i = 0; i < emuHT1080_VIDEO_RAM_SIZE; i++)
-		g_video_ram[i] = 32;
-
-	// init emulation variables
-	l_cas_motor_on = false;
-	l_total_cpu_cycles = 0;
-	l_current_cycles_per_frame = 0;
-	l_current_scanline = 0;
-	l_current_timestamp = sysHighresTimerGetTimestamp();
-	l_emulation_speed_timestamp = sysTimerGetTimestamp();
-	l_emulation_speed_cpu_cycles = 0;
-	l_emulation_speed_vsync_cycles = 0;
-	l_emulation_speed_cpu_freq = 0;
-	l_emulation_speed_vsync_freq = 0;
+	emuReset();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Main emulation task
-void emuHT1080Task(void)
+void emuTask(void)
 {
 	uint16_t cycles_to_execute;
 	uint16_t cycles_executed;
 	int32_t expected_cycle_per_frame;
-	uint32_t emulaton_speed_time;
 	bool full_speed = g_application_settings.FullSpeed || (l_cas_motor_on && g_application_settings.FastCassetteOperation);
-	bool screen_refresh_disabled = (l_cas_motor_on && g_application_settings.FastCassetteOperation);
 
- 	if (sysHighresTimerGetTimeSince(l_current_timestamp) >= emuHT1080_SCANLINE_IN_US || full_speed)
+ 	if (sysHighresTimerGetTimeSince(l_frame_start_timestamp) >= l_current_scanline_time || full_speed)
 	{
-		l_current_timestamp = sysHighresTimerGetTimestamp();
-
 		// calculate cycles to execute
 		expected_cycle_per_frame = (emuHT1080_CPU_CLK * (l_current_scanline + 1)) / emuHT1080_HSYNC_FREQ;
 		cycles_to_execute = (uint16_t)(expected_cycle_per_frame - l_current_cycles_per_frame);
@@ -167,10 +144,13 @@ void emuHT1080Task(void)
 		cycles_executed = cpuExecute(&l_cpu, cycles_to_execute);
 		l_current_cycles_per_frame += cycles_executed;
 		l_total_cpu_cycles += cycles_executed;
+		l_emulation_speed_cpu_cycles += cycles_executed;
 
 		// render scanline
-		if (l_current_scanline < emuHT1080_SCREEN_HEIGHT_IN_PIXEL && !screen_refresh_disabled)
-			emuHT1080RenderScanLine(l_current_scanline);
+		if (l_current_scanline == emuHT1080_SCREEN_HEIGHT_IN_PIXEL)
+		{
+			emuHT1080EndScreenrefresh();
+		}
 
 		// next scanline
 		l_current_scanline++;
@@ -180,27 +160,17 @@ void emuHT1080Task(void)
 			l_current_scanline = 0;
 			l_current_cycles_per_frame = 0;
 			l_emulation_speed_vsync_cycles++;
+			emuHT1080StartScreenRefresh();
+			l_frame_start_timestamp = sysHighresTimerGetTimestamp();
+			l_current_scanline_time = 0;
 		}
-	
+
+		// update time
+		l_current_scanline_time = l_current_scanline * 1000000 / emuHT1080_HSYNC_FREQ;
+
 		// handle cas input
 		if (l_cas_state >= emuCS_LoadStart)
 			emuCASIn();
-
-		// calculate emulation speed
-		l_emulation_speed_cpu_cycles += cycles_executed;
-		emulaton_speed_time = sysTimerGetTimeSince(l_emulation_speed_timestamp);
-		if (emulaton_speed_time > 1000)
-		{
-			l_emulation_speed_vsync_freq = l_emulation_speed_vsync_cycles * 1000 / emulaton_speed_time;
-			l_emulation_speed_cpu_cycles = l_emulation_speed_cpu_cycles / 1000 / emulaton_speed_time;
-
-			l_emulation_speed_cpu_cycles = 0;
-			l_emulation_speed_vsync_cycles = 0;
-
-			l_emulation_speed_timestamp = sysTimerGetTimestamp();
-
-
-		}
 	}
 
 #if 0
@@ -288,9 +258,89 @@ void emuHT1080Task(void)
 #endif
 }
 
-#pragma region - Memory handling -
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Reset the computer (cold start)
+void emuReset(void)
+{
+	uint16_t i;
+
+	// Reset CPU
+	cpuReset(&l_cpu);
+
+	// Clears RAM
+	for (i = 0; i < emuHT1080_RAM_SIZE; i++)
+		g_ram[i] = 0;
+
+	for (i = 0; i < emuHT1080_VIDEO_RAM_SIZE; i++)
+	{
+		g_video_ram[i] = 32;
+		g_screen_no_refresh_area[i] = 0;
+		emuHT1080RenderCharacter(i);
+	}
+
+	// init emulation variables
+	l_cas_motor_on = false;
+	l_total_cpu_cycles = 0;
+	l_current_cycles_per_frame = 0;
+	l_current_scanline = 0;
+	l_emulation_speed_cpu_cycles = 0;
+	l_emulation_speed_vsync_cycles = 0;
+	g_emulation_speed_cpu_freq = 0;
+	g_emulation_speed_vsync_freq = 0;
+
+	if (l_cas_file != sysNULL)
+	{
+		fileClose(l_cas_file);
+		l_cas_file = sysNULL;
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Issues NMI (warm reset)
+void emuNMI(void)
+{
+	cpuInt(&l_cpu, INT_NMI);
+}
+
+/*****************************************************************************/
+/* Statistics routines                                                       */
+/*****************************************************************************/
+#pragma region - Statistics routines -
+void emuResetStatistics(void)
+{
+	l_emulation_speed_cpu_cycles = 0;
+	l_emulation_speed_vsync_cycles = 0;
+}
+
+void emuUpdateStatistics(uint32_t in_measured_inteval_in_ms)
+{
+	g_emulation_speed_vsync_freq = l_emulation_speed_vsync_cycles * 10000 / in_measured_inteval_in_ms;
+	g_emulation_speed_cpu_freq = l_emulation_speed_cpu_cycles / 10 / in_measured_inteval_in_ms;
+}
+#pragma endregion
+
+/*****************************************************************************/
+/* Video routines                                                            */
+/*****************************************************************************/
+#pragma region - Video routines -
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Render (refresh) the whole screen content
+void emuRefreshScreen(void)
+{
+	uint16_t address;
+
+	emuHT1080StartScreenRefresh();
+	for (address = 0; address < emuHT1080_VIDEO_RAM_SIZE; address++)
+		emuHT1080RenderCharacter(address);
+	emuHT1080EndScreenrefresh();
+}
+#pragma endregion
+
 /****************************************************************************
 * M E M O R Y   I N T E R F A C E
+****************************************************************************/
+#pragma region - Memory handling -
+/****************************************************************************
 *
 * 0000 +----------------------------------------+
 *      | ROM (Basic interpreter)                |
@@ -317,6 +367,8 @@ void cpuMemWrite(register uint16_t in_address, register uint8_t in_value)
 	if (in_address >= emuHT1080_RAM_START)
 	{
 		g_ram[in_address - emuHT1080_RAM_START] = in_value;
+		if (in_address == 27686)
+			in_address = 27686;
 		return;
 	}
 
@@ -324,15 +376,25 @@ void cpuMemWrite(register uint16_t in_address, register uint8_t in_value)
 	if (in_address >= emuHT1080_VIDEO_RAM_START)
 	{
 		// character display
-		if (in_value & 0xa0)
-			in_value &= 0xbf;
-		else
-			in_value |= 0x40;
+		//if ((in_value & 0xa0) != 0)
+		//	in_value &= 0xbf;
+		//else
+		//	in_value |= 0x40;
 		
 		//if (in_value < 32)
 		//	in_value |= 0x40;
 
-		g_video_ram[in_address - emuHT1080_VIDEO_RAM_START] = in_value;
+		if ((in_value & 0x40) == 0)
+		{
+			if ((in_value & 0xa0) == 0)
+				in_value |= 0x40;
+		}
+
+		if(g_video_ram[in_address - emuHT1080_VIDEO_RAM_START] != in_value)
+		{
+			g_video_ram[in_address - emuHT1080_VIDEO_RAM_START] = in_value;
+			emuHT1080RenderCharacter(in_address - emuHT1080_VIDEO_RAM_START);
+		}
 		return;
 	}
 
@@ -344,13 +406,16 @@ void cpuMemWrite(register uint16_t in_address, register uint8_t in_value)
 //--------------------------------------------------------------
 uint8_t cpuMemRead(register uint16_t in_address)
 {
+	uint8_t data;
+	uint8_t i;
+
 	// read RAM
 	if (in_address >= emuHT1080_RAM_START)
 		return g_ram[in_address - emuHT1080_RAM_START];
 
 	// read ROM
 	if (in_address < emuHT1080_ROM_SIZE)
-		return ht_s1_basic_rom[in_address];// MODEL1_rom[in_address]; //level1_rom[in_address];  ht_s1_basic_rom[in_address];
+		return  ht_s1_basic_rom[in_address];//MODEL1_rom[in_address]; //level1_rom[in_address];  ht_s1_basic_rom[in_address];
 
 	if (in_address >= emuHT1080_KEYBOARD_START)
 	{
@@ -361,35 +426,18 @@ uint8_t cpuMemRead(register uint16_t in_address)
 		}
 		else
 		{
-			// keyboard
-			switch (in_address)
+			data = 0;
+
+			//  emulate wired or of keyboard rows
+			for (i = 0; i < 8; i++)
 			{
-				case 0x3801:
-					return g_keyboard_ram[0];
-
-				case 0x3802:
-					return g_keyboard_ram[1];
-
-				case 0x3804:
-					return g_keyboard_ram[2];
-
-				case 0x3808:
-					return g_keyboard_ram[3];
-
-				case 0x3810:
-					return g_keyboard_ram[4];
-
-				case 0x3820:
-					return g_keyboard_ram[5];
-
-				case 0x3840:
-					return g_keyboard_ram[6];
-
-				case 0x3880:
-					return g_keyboard_ram[7];
+				if ((in_address & (1 << i)) != 0)
+				{
+					data |= g_keyboard_ram[i];
+				}
 			}
 
-			return 0;
+			return data;
 		}
 	}
 	else
@@ -400,10 +448,10 @@ uint8_t cpuMemRead(register uint16_t in_address)
 }
 #pragma endregion
 
-#pragma region - Port handing -
 /******************************************************************************
 * P O R T S
 ******************************************************************************/
+#pragma region - Port handing -
 
 //--------------------------------------------------------------
 // Port read
@@ -469,10 +517,11 @@ void cpuOut(register uint16_t in_port, register uint8_t in_value)
 }
 #pragma endregion
 
+/****************************************************************************
+* K E Y B O A R D  H A N D L I N G
+****************************************************************************/
 #pragma region - Keyboard handling -
 /****************************************************************************
-* K E Y B O A R D  I N T E R F A C E
-*
 * Keyboard matrix:
 *       d7 d6 d5 d6 d3 d2 d1 d0
 * 3801   G  F  E  D  C  B  A  @
@@ -486,423 +535,266 @@ void cpuOut(register uint16_t in_port, register uint8_t in_value)
 *
 ****************************************************************************/
 
-static bool l_shift_state = false;
+#define KTE_INVALID   0
+#define KTE_NO_MOD    1
+#define KTE_SHIFT_ON  2
+#define KTE_SHIFT_OFF 3
 
-typedef struct
+#define KTE(row, bit, modifier) (uint8_t)(((row << 5) | (bit << 2)) | modifier)
+
+#define ROW(x) ((x) << 5)
+#define BIT(x) ((x) << 2)
+
+#define GET_ROW(x) (((x) >> 5) & 0x07)
+#define GET_BIT(x) (((x) >> 2) & 0x07)
+#define GET_MOD(x) ((x)& 0x03)
+
+static const uint8_t l_keyboard_table[128] =
 {
-	int Row;			//which byte in sg_keymatXlat
-	int Bit;			//which bit in sg_keymatXlat
-	int ShiftCtl;	//bitfield; 1 = shift, 2 = ctl
-} KeyboardTableEntry;
+	KTE( 0, 0, KTE_INVALID),	//NUL
+	KTE( 0, 0, KTE_INVALID),	//ctrl-A SOH
+	KTE( 0, 0, KTE_INVALID),	//ctrl-B STX
+	KTE( 0, 0, KTE_INVALID),	//ctrl-C ETX
+	KTE( 0, 0, KTE_INVALID),	//ctrl-D EOT
+	KTE( 0, 0, KTE_INVALID),	//ctrl-E ENQ
+	KTE( 0, 0, KTE_INVALID),	//ctrl-F ACK
+	KTE( 0, 0, KTE_INVALID),	//ctrl-G BEL
+	KTE( 6, 5, KTE_NO_MOD),		//ctrl-H BS
+	KTE( 0, 0, KTE_INVALID),	//ctrl-I TAB
+	KTE( 0, 0, KTE_INVALID),	//ctrl-J LF
+	KTE( 0, 0, KTE_INVALID),	//ctrl-K VT
+	KTE( 0, 0, KTE_INVALID),	//ctrl-L FF
+	KTE( 6, 0, KTE_NO_MOD),		//ctrl-M CR
+	KTE( 0, 0, KTE_INVALID),	//ctrl-N SO
+	KTE( 0, 0, KTE_INVALID),	//ctrl-O SI
+	KTE( 0, 0, KTE_INVALID),	//ctrl-P DLE
+	KTE( 0, 0, KTE_INVALID),	//ctrl-Q DC0
+	KTE( 0, 0, KTE_INVALID),	//ctrl-R DC0
+	KTE( 0, 0, KTE_INVALID),	//ctrl-S DC0
+	KTE( 0, 0, KTE_INVALID),	//ctrl-T DC0
+	KTE( 0, 0, KTE_INVALID),	//ctrl-U NAK
+	KTE( 0, 0, KTE_INVALID),	//ctrl-V SYN
+	KTE( 0, 0, KTE_INVALID),	//ctrl-W ETB
+	KTE( 0, 0, KTE_INVALID),	//ctrl-X CAN
+	KTE( 0, 0, KTE_INVALID),	//ctrl-Y EM
+	KTE( 0, 0, KTE_INVALID),	//ctrl-Z SUB
+	KTE( 0, 0, KTE_INVALID),	//ESC
+	KTE( 0, 0, KTE_INVALID),	//FS
+	KTE( 0, 0, KTE_INVALID),	//GS
+	KTE( 0, 0, KTE_INVALID),	//RS
+	KTE( 0, 0, KTE_INVALID),	//clear
 
-static const KeyboardTableEntry l_keyboard_table[] =
-{
-	{ 3, 7  , 0 },	//(invalid) NUL
-	{ 0, 2  , 2 },	//ctrl-A SOH
-	{ 0, 4  , 2 },	//ctrl-B STX
-	{ 0, 8  , 2 },	//ctrl-C ETX
-	{ 0, 16 , 2 },	//ctrl-D EOT
-	{ 0, 32 , 2 },	//ctrl-E ENQ
-	{ 0, 64 , 2 },	//ctrl-F ACK
-	{ 0, 128, 2 },	//ctrl-G BEL
-	{ 1, 1  , 2 },	//ctrl-H BS
-	{ 1, 2  , 2 },	//ctrl-I TAB
-	{ 1, 4  , 2 },	//ctrl-J LF
-	{ 1, 8  , 2 },	//ctrl-K VT
-	{ 1, 16 , 2 },	//ctrl-L FF
-	{ 1, 32 , 2 },	//ctrl-M CR
-	{ 1, 64 , 2 },	//ctrl-N SO
-	{ 1, 128, 2 },	//ctrl-O SI
-	{ 2, 1  , 2 },	//ctrl-P DLE
-	{ 2, 2  , 2 },	//ctrl-Q DC1
-	{ 2, 4  , 2 },	//ctrl-R DC2
-	{ 2, 8  , 2 },	//ctrl-S DC3
-	{ 2, 16 , 2 },	//ctrl-T DC4
-	{ 2, 32 , 2 },	//ctrl-U NAK
-	{ 2, 64 , 2 },	//ctrl-V SYN
-	{ 2, 128, 2 },	//ctrl-W ETB
-	{ 3, 1  , 2 },	//ctrl-X CAN
-	{ 3, 2  , 2 },	//ctrl-Y EM
-	{ 3, 4  , 2 },	//ctrl-Z SUB
-	{ 6, 8  , 1 },	//ESC
-	{ 3, 7  , 0 },	//(invalid) FS
-	{ 3, 7  , 0 },	//(invalid) GS
-	{ 3, 7  , 0 },	//(invalid) RS
-	{ 6, 2  , 0 },	//clear
+	KTE( 6, 7, KTE_NO_MOD),		//space
+	KTE( 4, 1, KTE_SHIFT_ON),	//!
+	KTE( 4, 2, KTE_SHIFT_ON),	//"
+	KTE( 4, 3, KTE_SHIFT_ON),	//#
+	KTE( 4, 4, KTE_SHIFT_ON),	//$
+	KTE( 4, 5, KTE_SHIFT_ON),	//%
+	KTE( 4, 6, KTE_SHIFT_ON),	//&
+	KTE( 4, 7, KTE_SHIFT_ON),	//'
+	KTE( 5, 0, KTE_SHIFT_ON),	//(
+	KTE( 5, 1, KTE_SHIFT_ON),	//)
+	KTE( 5, 2, KTE_SHIFT_ON),	//*
+	KTE( 5, 3, KTE_SHIFT_ON),	//+
+	KTE( 5, 4, KTE_SHIFT_OFF),//,
+	KTE( 5, 5, KTE_SHIFT_OFF),//-
+	KTE( 5, 6, KTE_SHIFT_OFF),//.
+	KTE( 5, 7, KTE_SHIFT_OFF),///
+	KTE( 4, 0, KTE_SHIFT_OFF),//0
+	KTE( 4, 1, KTE_SHIFT_OFF),//1
+	KTE( 4, 2, KTE_SHIFT_OFF),//2
+	KTE( 4, 3, KTE_SHIFT_OFF),//3
+	KTE( 4, 4, KTE_SHIFT_OFF),//4
+	KTE( 4, 5, KTE_SHIFT_OFF),//5
+	KTE( 4, 6, KTE_SHIFT_OFF),//6
+	KTE( 4, 7, KTE_SHIFT_OFF),//7
+	KTE( 5, 0, KTE_SHIFT_OFF),//8
+	KTE( 5, 1, KTE_SHIFT_OFF),//9
+	KTE( 5, 2, KTE_SHIFT_OFF),//:
+	KTE( 5, 3, KTE_SHIFT_OFF),//;
+	KTE( 5, 4, KTE_SHIFT_ON),	//<
+	KTE( 5, 5, KTE_SHIFT_ON),	//=
+	KTE( 5, 6, KTE_SHIFT_ON),	//>
+	KTE( 5, 7, KTE_SHIFT_ON),	//?
 
-	{ 6, 128, 0 },	//space
-	{ 4, 2  , 1 },	//!
-	{ 4, 4  , 1 },	//"
-	{ 4, 8  , 1 },	//#
-	{ 4, 16 , 1 },	//$
-	{ 4, 32 , 1 },	//%
-	{ 4, 64 , 1 },	//&
-	{ 4, 128, 1 },	//'
-	{ 5, 1  , 1 },	//(
-	{ 5, 2  , 1 },	//)
-	{ 5, 4  , 1 },	//*
-	{ 5, 8  , 1 },	//+
-	{ 5, 16 , 0 },	//,
-	{ 5, 32 , 0 },	//-
-	{ 5, 64 , 0 },	//.
-	{ 5, 128, 0 },	///
-	{ 4, 1  , 0 },	//0
-	{ 4, 2  , 0 },	//1
-	{ 4, 4  , 0 },	//2
-	{ 4, 8  , 0 },	//3
-	{ 4, 16 , 0 },	//4
-	{ 4, 32 , 0 },	//5
-	{ 4, 64 , 0 },	//6
-	{ 4, 128, 0 },	//7
-	{ 5, 1  , 0 },	//8
-	{ 5, 2  , 0 },	//9
-	{ 5, 4  , 0 },	//:
-	{ 5, 8  , 0 },	//;
-	{ 5, 16 , 1 },	//<
-	{ 5, 32 , 1 },	//=
-	{ 5, 64 , 1 },	//>
-	{ 5, 128, 1 },	//?
+	KTE( 0, 0, KTE_NO_MOD),		//@
+	KTE( 0, 1, KTE_NO_MOD),		//A
+	KTE( 0, 2, KTE_NO_MOD),		//B
+	KTE( 0, 3, KTE_NO_MOD),		//C
+	KTE( 0, 4, KTE_NO_MOD),		//D
+	KTE( 0, 5, KTE_NO_MOD),		//E
+	KTE( 0, 6, KTE_NO_MOD),		//F
+	KTE( 0, 7, KTE_NO_MOD),		//G
+	KTE( 1, 0, KTE_NO_MOD),		//H
+	KTE( 1, 1, KTE_NO_MOD),		//I
+	KTE( 1, 2, KTE_NO_MOD),		//J
+	KTE( 1, 3, KTE_NO_MOD),		//K
+	KTE( 1, 4, KTE_NO_MOD),		//L
+	KTE( 1, 5, KTE_NO_MOD),		//M
+	KTE( 1, 6, KTE_NO_MOD),		//N
+	KTE( 1, 7, KTE_NO_MOD),		//O
+	KTE( 2, 0, KTE_NO_MOD),		//P
+	KTE( 2, 1, KTE_NO_MOD),		//Q
+	KTE( 2, 2, KTE_NO_MOD),		//R
+	KTE( 2, 3, KTE_NO_MOD),		//S
+	KTE( 2, 4, KTE_NO_MOD),		//T
+	KTE( 2, 5, KTE_NO_MOD),		//U
+	KTE( 2, 6, KTE_NO_MOD),		//V
+	KTE( 2, 7, KTE_NO_MOD),		//W
+	KTE( 3, 0, KTE_NO_MOD),		//X
+	KTE( 3, 1, KTE_NO_MOD),		//Y
+	KTE( 3, 2, KTE_NO_MOD),		//Z
+	KTE( 0, 0, KTE_INVALID),	//[
+	KTE( 0, 0, KTE_INVALID),	//\ 
+	KTE( 0, 0, KTE_INVALID),	//]
+	KTE( 0, 0, KTE_INVALID),	//^
+	KTE( 0, 0, KTE_INVALID),	//_
 
-	{ 0, 1  , 0 },	//@
-	{ 0, 2  , 0 },	//A
-	{ 0, 4  , 0 },	//B
-	{ 0, 8  , 0 },	//C
-	{ 0, 16 , 0 },	//D
-	{ 0, 32 , 0 },	//E
-	{ 0, 64 , 0 },	//F
-	{ 0, 128, 0 },	//G
-	{ 1, 1  , 0 },	//H
-	{ 1, 2  , 0 },	//I
-	{ 1, 4  , 0 },	//J
-	{ 1, 8  , 0 },	//K
-	{ 1, 16 , 0 },	//L
-	{ 1, 32 , 0 },	//M
-	{ 1, 64 , 0 },	//N
-	{ 1, 128, 0 },	//O
-	{ 2, 1  , 0 },	//P
-	{ 2, 2  , 0 },	//Q
-	{ 2, 4  , 0 },	//R
-	{ 2, 8  , 0 },	//S
-	{ 2, 16 , 0 },	//T
-	{ 2, 32 , 0 },	//U
-	{ 2, 64 , 0 },	//V
-	{ 2, 128, 0 },	//W
-	{ 3, 1  , 0 },	//X
-	{ 3, 2  , 0 },	//Y
-	{ 3, 4  , 0 },	//Z
-	{ 6, 8  , 0 },	//up  ascii [
-	{ 6, 16 , 0 },	//down ascii \ 
-	{ 6, 32 , 0 },	//left ascii ]
-	{ 6, 64 , 0 },	//right ascii ^
-	{ 3, 7  , 0 },	//(invalid) _
-
-	{ 3, 7  , 0 },	//(invalid) `
-	{ 0, 2  , 1 },	//a
-	{ 0, 4  , 1 },	//b
-	{ 0, 8  , 1 },	//c
-	{ 0, 16 , 1 },	//d
-	{ 0, 32 , 1 },	//e
-	{ 0, 64 , 1 },	//f
-	{ 0, 128, 1 },	//g
-	{ 1, 1  , 1 },	//h
-	{ 1, 2  , 1 },	//i
-	{ 1, 4  , 1 },	//j
-	{ 1, 8  , 1 },	//k
-	{ 1, 16 , 1 },	//l
-	{ 1, 32 , 1 },	//m
-	{ 1, 64 , 1 },	//n
-	{ 1, 128, 1 },	//o
-	{ 2, 1  , 1 },	//p
-	{ 2, 2  , 1 },	//q
-	{ 2, 4  , 1 },	//r
-	{ 2, 8  , 1 },	//s
-	{ 2, 16 , 1 },	//t
-	{ 2, 32 , 1 },	//u
-	{ 2, 64 , 1 },	//v
-	{ 2, 128, 1 },	//w
-	{ 3, 1  , 1 },	//x
-	{ 3, 2  , 1 },	//y
-	{ 3, 4  , 1 },	//Z
-	{ 3, 7  , 0 },	//(invalid) {
-	{ 3, 7  , 0 },	//(invalid) |
-	{ 3, 7  , 0 },	//(invalid) }
-	{ 3, 7  , 0 },	//(invalid) ~
-	{ 3, 7  , 0 },	//(invalid) DEL
+	KTE( 0, 0, KTE_INVALID),	//`
+	KTE( 0, 1, KTE_NO_MOD),		//a
+	KTE( 0, 2, KTE_NO_MOD),		//b
+	KTE( 0, 3, KTE_NO_MOD),		//c
+	KTE( 0, 4, KTE_NO_MOD),		//d
+	KTE( 0, 5, KTE_NO_MOD),		//e
+	KTE( 0, 6, KTE_NO_MOD),		//f
+	KTE( 0, 7, KTE_NO_MOD),		//g
+	KTE( 1, 0, KTE_NO_MOD),		//h
+	KTE( 1, 1, KTE_NO_MOD),		//i
+	KTE( 1, 2, KTE_NO_MOD),		//j
+	KTE( 1, 3, KTE_NO_MOD),		//k
+	KTE( 1, 4, KTE_NO_MOD),		//l
+	KTE( 1, 5, KTE_NO_MOD),		//m
+	KTE( 1, 6, KTE_NO_MOD),		//n
+	KTE( 1, 7, KTE_NO_MOD),		//o
+	KTE( 2, 0, KTE_NO_MOD),		//p
+	KTE( 2, 1, KTE_NO_MOD),		//q
+	KTE( 2, 2, KTE_NO_MOD),		//r
+	KTE( 2, 3, KTE_NO_MOD),		//s
+	KTE( 2, 4, KTE_NO_MOD),		//t
+	KTE( 2, 5, KTE_NO_MOD),		//u
+	KTE( 2, 6, KTE_NO_MOD),		//v
+	KTE( 2, 7, KTE_NO_MOD),		//w
+	KTE( 3, 0, KTE_NO_MOD),		//x
+	KTE( 3, 1, KTE_NO_MOD),		//y
+	KTE( 3, 2, KTE_NO_MOD),		//Z
+	KTE( 0, 0, KTE_INVALID),	//{
+	KTE( 0, 0, KTE_INVALID),	//|
+	KTE( 0, 0, KTE_INVALID),	//)
+	KTE( 0, 0, KTE_INVALID),	//~
+	KTE( 0, 0, KTE_INVALID) 	//DEL
 };
 
-void emuHT1080UserInputEventHandler(uint8_t in_device_number, sysUserInputEventCategory in_event_category, sysUserInputEventType in_event_type, uint32_t in_event_param)
+void emuUserInputEventHandler(uint8_t in_device_number, sysUserInputEventCategory in_event_category, sysUserInputEventType in_event_type, uint32_t in_event_param)
 {
-	bool pressed = (in_event_category == sysUIEC_Pressed); 
-	const KeyboardTableEntry* entry = sysNULL;
-	int keyboard_table_index = -1;
+	bool pressed = (in_event_category == sysUIEC_Pressed);
+	uint8_t keyboard_table_entry = KTE(0, 0, KTE_INVALID);
+	sysChar ch;
+	uint32_t current_modifiers;
+	uint8_t row;
+	uint8_t bit;
+	uint8_t modifier;
+	bool shift_state = false;
 
-	//fbUserInputEventHandler(in_device_number, in_event_category, in_event_type, in_event_param);
-
-	//return;
+	// convert to character (if possible)
+	ch = cpConvertWin1250(in_device_number, in_event_category, in_event_type, in_event_param);
+	current_modifiers = sysUserInputGetModifiersState(in_device_number);
 
 	// handle keyboard events
 	if (in_event_type == sysUIET_Key && (in_event_category == sysUIEC_Pressed || in_event_category == sysUIEC_Released))
 	{
-		if (in_event_param >= sysVKC_A && in_event_param <= sysVKC_Z)
+		if (ch != sysVKC_NULL)
 		{
-			//these are simply their ascii values, but we also need to consider the shift state
-			//note, we do not consider the caps lock state, because we treat
-			//key as a special regular (oxymoron?) key (trs-80 does it via
-			//shift-0)
-			if (0/*bCtrl*/)	//ctl pressed; shift irrelevant
-			{
-				keyboard_table_index = in_event_param - 0x40;	//(as ctl key)
-			}
-			else if (l_shift_state)	//shift pressed
-			{
-				//XXX inverting 'shift' notion
-				//keyboard_table_index = in_event_param;	//(as upper case)
-				entry = &l_keyboard_table[in_event_param + 0x20];	//(as lower case)
-			}
-			else
-			{
-				//XXX inverting 'shift' notion
-				//keyboard_table_index = in_event_param + 0x20;	//(as lower case)
-				entry = &l_keyboard_table[in_event_param];	//(as upper case)
-			}
-		}
-		else if (in_event_param >= '0' && in_event_param <= '9')
-		{	//these are simply their ascii values, but need to consider shift state
-			if (l_shift_state)
-			{
-				switch (in_event_param)
-				{
-				case '1': entry = &l_keyboard_table['\'']; break;
-				case '2': entry = &l_keyboard_table['\"']; break;
-				case '3': entry = &l_keyboard_table['+']; break;
-				case '4': entry = &l_keyboard_table['!']; break;
-				case '5': entry = &l_keyboard_table['%']; break;
-				case '6': entry = &l_keyboard_table['/']; break;
-				case '7': entry = &l_keyboard_table['=']; break;
-				case '8': entry = &l_keyboard_table['(']; break;
-				case '9': entry = &l_keyboard_table[')']; break;
-				case '0': break;
-				}
-			}
-			else
-			{
-				entry = &l_keyboard_table[in_event_param];
-			}
-		}
-		else if (in_event_param >= sysVKC_NUMPAD0 && in_event_param <= sysVKC_NUMPAD9)
-		{
-			//bNumLock will cause other VK codes, so we don't need to process it
-			//bShift
-			entry = &l_keyboard_table[in_event_param - sysVKC_NUMPAD0 + '0'];
-		}
-		else if (in_event_param == sysVKC_SHIFT)
-		{
-			l_shift_state = (in_event_category == sysUIEC_Pressed);
-		}
-		else if (sysVKC_DIVIDE == in_event_param)
-		{
-			entry = &l_keyboard_table['/'];
-		}
-		else if (sysVKC_ADD == in_event_param)
-		{
-			entry = &l_keyboard_table['+'];
-		}
-		else if (sysVKC_SUBTRACT == in_event_param)
-		{
-			entry = &l_keyboard_table['-'];
-		}
-		else if (sysVKC_MULTIPLY == in_event_param)
-		{
-			entry = &l_keyboard_table['*'];
-		}
-		else if (sysVKC_DECIMAL == in_event_param)
-		{
-			entry = &l_keyboard_table['.'];
-		}
-		else if (sysVKC_ESCAPE == in_event_param)
-		{
-			entry = &l_keyboard_table[0x1b];
-		}
-		else if (sysVKC_SPACE == in_event_param)
-		{
-			entry = &l_keyboard_table[' '];
-		}
-		else if (VK_OEM_COMMA == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? ',' : '<';
-		}
-		else if (VK_OEM_PERIOD == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? '.' : '>';
-		}
-		else if (VK_OEM_2 == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? '/' : '?';
-		}
-		else if (VK_OEM_1 == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? ';' : ':';
-		}
-		else if (VK_OEM_7 == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? '\'' : '"';
-		}
-		else if (VK_OEM_PLUS == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? '=' : '+';
-		}
-		else if (VK_OEM_MINUS == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? '-' : -1;	//(doesn't have underscore via keyboard)
-		}
-		else if (VK_OEM_3 == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? '`' : '~';	//(these are arrow key locs)
-		}
-		else if (VK_OEM_4 == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? '[' : '{';	//(these are arrow key locs)
-		}
-		else if (VK_OEM_6 == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? ']' : '}';	//(these are arrow key locs)
-		}
-		else if (VK_OEM_5 == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? '\\' : '|';	//(these are arrow key locs)
-		}
-		else if (VK_UP == in_event_param)
-		{
-			//keyboard_table_index = !bShift ? 0x5b : 0x1b;	//ESC 0x1b
-																					//or is it ??
-		}
-		else if (VK_F12 == in_event_param)	//clear key
-		{
-			entry = &l_keyboard_table[0x1f];	//EREOF
-		}
+			// if it can be converter to character
+			ch = cpToUpperWin1250(ch);
 
-		// handle keyboard info
-		if (entry == sysNULL)
+			if (ch < 128 && ch >= 0)
+			{
+				keyboard_table_entry = l_keyboard_table[(uint8_t)ch];
+			}
+		}
+		else
 		{
-			// translate keyboard
+			// special keys
 			switch (in_event_param)
 			{
-				// enter key
-				case sysVKC_RETURN:
-				{
-					static const KeyboardTableEntry enter = { 6, 1, 0 };
-					entry = &enter;
-				}
-				break;
+				case sysVKC_SPECIAL_KEY_FLAG | sysVKC_UP:
+					keyboard_table_entry = KTE(6, 3, KTE_NO_MOD);
+					break;
 
-				// break key
-				case sysVKC_F11:
-				{
-					static const KeyboardTableEntry brk = { 6, 4, 0 };	//break
-					entry = &brk;
-				}
-				break;
+				case sysVKC_SPECIAL_KEY_FLAG | sysVKC_DOWN:
+					keyboard_table_entry = KTE(6, 4, KTE_NO_MOD);
+					break;
 
-				// capital key
-				case sysVKC_CAPITAL:
-				{
-					static const KeyboardTableEntry shift0 = { 4, 1, 1 };	//shift-0
-					entry = &shift0;
-				}
-				break;
+				case sysVKC_SPECIAL_KEY_FLAG | sysVKC_LEFT:
+					keyboard_table_entry = KTE(6, 5, KTE_NO_MOD);
+					break;
 
-				// shift-@
-				case sysVKC_F10:
-				{
-					static const KeyboardTableEntry shift_at = { 0, 1, 1 };	//shift-@
-					entry = &shift_at;
-				}
-				break;
+				case sysVKC_SPECIAL_KEY_FLAG | sysVKC_RIGHT:
+					keyboard_table_entry = KTE(6, 6, KTE_NO_MOD);
+					break;
 
-				case sysVKC_LEFT:
-				case sysVKC_BACK:
-				{
-					static const KeyboardTableEntry left = { 6, 32 , 0 };	//left ascii ]
-					static const KeyboardTableEntry shift_left = { 6, 32 , 1 };	//shift + left ascii ]
-					entry = !l_shift_state ? &left : &shift_left;
-				}
-				break;
+				case sysVKC_ESCAPE:
+					keyboard_table_entry = KTE(6, 2, KTE_NO_MOD);
+					break;
 
-				case sysVKC_RIGHT:
-				case sysVKC_TAB:
-				{
-					static const KeyboardTableEntry right = { 6, 64 , 0 };	//right ascii ^
-					static const KeyboardTableEntry shift_right = { 6, 64 , 1 };	//shift right ascii ^
-					entry = !l_shift_state ? &right : &shift_right;
-				}
-				break;
-
-				case sysVKC_DOWN:
-				{
-					static const KeyboardTableEntry mmDown = { 6, 16 , 0 };	//down ascii (backslash) 
-					static const KeyboardTableEntry mmShiftDown = { 6, 16 , 1 };	//shift down ascii (backslash) 
-					entry = !l_shift_state ? &mmDown : &mmShiftDown;
-				}
-				break;
+				case sysVKC_SPECIAL_KEY_FLAG | sysVKC_END:
+					keyboard_table_entry = KTE(6, 1, KTE_NO_MOD);
+					break;
 			}
 		}
 
+		// set actual modifier state
+		if ((current_modifiers & sysMS_SHIFT) == 0)
+			g_keyboard_ram[7] &= ~1;
+		else
+			g_keyboard_ram[7] |= 1;
+
 		// process entry
-		if (entry != sysNULL)
+		modifier = GET_MOD(keyboard_table_entry);
+		if (modifier != KTE_INVALID)
 		{
-			//do any modifiers
-			if (entry->ShiftCtl == 0)	//non-modified?
-			{
-				//{ 7, 1  , 0 },	//shift
-				//{ 6, 16 , 1 },	//shift |v
-				g_keyboard_ram[7] &= ~1;
-				g_keyboard_ram[6] &= ~16;
-			}
-			else if ((entry->ShiftCtl & 1) != 0)	//shifted?
-			{
-				//{ 7, 1  , 0 },	//shift
-				if (in_event_category == sysUIEC_Pressed)
-				{
-					g_keyboard_ram[7] |= 1;
-				}
-				else
-				{
-					g_keyboard_ram[7] &= ~1;
-				}
-			}
-			else if ((entry->ShiftCtl & 2) != 0)	//ctrl?
-			{
-				//{ 7, 1  , 0 },	//shift
-				//{ 6, 16 , 1 },	//shift |v
-				if (in_event_category == sysUIEC_Pressed)
-				{
-					g_keyboard_ram[7] |= 1;
-					g_keyboard_ram[6] |= 16;
-				}
-				else
-				{
-					g_keyboard_ram[7] &= ~1;
-					g_keyboard_ram[6] &= ~16;
-				}
-			}
-			//now do the actual key
+			row = GET_ROW(keyboard_table_entry);
+			bit = GET_BIT(keyboard_table_entry);
+
+			// store in the keyboard data matrix
 			if (in_event_category == sysUIEC_Pressed)
 			{
-				g_keyboard_ram[entry->Row] |= entry->Bit;
+				// pressed
+				// activate required modifiers
+				switch (modifier)
+				{
+					// no change
+					case KTE_NO_MOD:
+						break;
+
+						// force shift on
+					case KTE_SHIFT_ON:
+						g_keyboard_ram[7] |= 1;
+						break;
+
+						// force shift off
+					case KTE_SHIFT_OFF:
+						g_keyboard_ram[7] &= ~1;
+						break;
+				}
+
+				// store key data
+				g_keyboard_ram[row] |= (1 << bit);
 			}
 			else
 			{
-				g_keyboard_ram[entry->Row] &= ~entry->Bit;
+				g_keyboard_ram[row] &= ~(1 << bit);
 			}
 		}
 	}
 }
+
 #pragma endregion
 
-#pragma region - Timing rutines -
 /****************************************************************************
-* T I M I N G    R O U T I N E S   
+* T I M I N G    R O U T I N E S
 ****************************************************************************/
+#pragma region - Timing rutines -
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Gets current CPU timestamp in cycle count
@@ -936,79 +828,82 @@ static uint32_t cpuGetEllapsedTimeSinceInMicrosec(uint32_t in_timestamp)
 
 #pragma endregion
 
+/*****************************************************************************/
+/* C A S E T T E   I N T E R F A C E                                         */
+/*****************************************************************************/
 #pragma region - Cassette routines -
-/****************************************************************************
-* C A S E T T E   I N T E R F A C E
-****************************************************************************/
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Handles cassette motor on operation
 static void emuCASMotorOn(void)
 {
-	// do nothing when cas interface is idle
-	if (l_cas_state == emuCS_Idle)
-		return;
+	switch (l_cas_state)
+	{
+		case emuCS_Idle:
+		case emuCS_LoadStart:
+			// open cas file if it is not opened
+			if(l_cas_file == sysNULL)
+				l_cas_file = fileOpen(g_application_settings.CassetteFileName, "rb");
+
+			if (l_cas_file != sysNULL)
+			{
+				// read first byte and initialize loading
+				fileRead(&l_cas_buffer, sizeof(l_cas_buffer), 1, l_cas_file);
+				l_cas_clock_timestamp = cpuGetTimestamp();
+				l_in_port_ff &= ~emuPORT_FF_INPUT_MASK; // clock pulse
+				l_cas_buffer_bit_count = 8;
+				l_cas_state = emuCS_LoadData;
+			}
+			else
+			{
+				l_cas_state = emuCS_Idle;
+			}
+			break;
+
+		case emuCS_SaveStart:
+			// create file
+			l_cas_file = fileOpen("test.cas", "wb");
+
+			// start data decoding
+			l_cas_state = emuCS_SaveWaitForClock;
+			l_cas_buffer_bit_count = 0;
+			l_cas_buffer = 0;
+
+			break;
+	}
+
+	// handle fast cassette operation
+	if (g_application_settings.FastCassetteOperation)
+	{
+		fbWaitIndicatorShow();
+	}
 
 	l_cas_motor_on = true;
-
-	// start saving
-	if (l_cas_state == emuCS_SaveStart)
-	{
-		// create file
-		l_cas_file = fileOpen("test.cas", "wb");
-
-		// start data decoding
-		l_cas_state = emuCS_SaveWaitForClock;
-		l_cas_buffer_bit_count = 0;
-		l_cas_buffer = 0;
-	}
-
-	// start loading
-	if (l_cas_state == emuCS_LoadStart)
-	{
-		// load cas file
-		l_cas_file = fileOpen("galaxy.cas", "rb");
-
-		fileRead(&l_cas_buffer, sizeof(l_cas_buffer), 1, l_cas_file);
-		l_cas_buffer_bit_count = 8;
-		l_cas_state = emuCS_LoadClock;
-		l_in_port_ff |= emuPORT_FF_INPUT_MASK; // clock pulse
-		l_cas_clock_timestamp = cpuGetTimestamp();
-
-		// handle fast cassette operation
-		if (g_application_settings.FastCassetteOperation)
-		{
-			fbWaitIndicatorShow();
-		}
-	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Handles motor off operaton of casette operation
 static void emuCASMotorOff(void)
 {
-	// do nothing when cas interface is idle
-	if (l_cas_state == emuCS_Idle)
-		return;
-
-	l_cas_motor_on = false;
-
-	fbWaitIndicatorHide();
-
-	// motor was turned off
-	if (l_cas_file != sysNULL)
+	switch (l_cas_state)
 	{
-		if (l_cas_buffer_bit_count > 0 && l_cas_state == emuCS_SaveWaitForData)
-		{
-			l_cas_buffer <<= 8 - l_cas_buffer_bit_count;
-			fileWrite(&l_cas_buffer, sizeof(l_cas_buffer), 1, l_cas_file);
-		}
+		case emuCS_SaveWaitForData:
+			if (l_cas_buffer_bit_count > 0)
+			{
+				l_cas_buffer <<= 8 - l_cas_buffer_bit_count;
+				fileWrite(&l_cas_buffer, sizeof(l_cas_buffer), 1, l_cas_file);
+			}
 
-		fileClose(l_cas_file);
+			fileClose(l_cas_file);
+			l_cas_file = sysNULL;
+			break;
 	}
 
-	l_cas_file = sysNULL;
+	l_cas_motor_on = false;
 	l_cas_state = emuCS_Idle;
+
+	fbWaitIndicatorHide();
+	emuRefreshScreen();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1072,6 +967,8 @@ static void emuCASOut(uint8_t in_pulse)
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Handles cassette input pulse (load)
 static void emuCASIn(void)
 {
 	uint32_t ellapsed_time_since_clock;
@@ -1079,16 +976,18 @@ static void emuCASIn(void)
 	if (l_cas_state <= emuCS_LoadStart)
 		return;
 
+	// update busy indicator
 	if(g_application_settings.FastCassetteOperation)
 		fbWaitIndicatorUpdate();
 
+	// time since clock pulse
 	ellapsed_time_since_clock = cpuGetEllapsedTimeSinceInMicrosec(l_cas_clock_timestamp);
 
 	switch (l_cas_state)
 	{
 		case emuCS_LoadClock:
 			// handle data
-			if (ellapsed_time_since_clock > 800)
+			if (ellapsed_time_since_clock > 1300)
 			{
 				if ((l_cas_buffer & 0x80) != 0)
 					l_in_port_ff |= emuPORT_FF_INPUT_MASK;
@@ -1097,9 +996,14 @@ static void emuCASIn(void)
 				l_cas_buffer_bit_count--;
 				if (l_cas_buffer_bit_count == 0)
 				{
-					if (fileRead(&l_cas_buffer, sizeof(l_cas_buffer), 1, l_cas_file) != 1)
+					if (l_cas_file != sysNULL)
 					{
-						l_cas_buffer = 0;
+						if (fileRead(&l_cas_buffer, sizeof(l_cas_buffer), 1, l_cas_file) != 1)
+						{
+							l_cas_buffer = 0;
+							fileClose(l_cas_file);
+							l_cas_file = sysNULL;
+						}
 					}
 					l_cas_buffer_bit_count = 8;
 				}

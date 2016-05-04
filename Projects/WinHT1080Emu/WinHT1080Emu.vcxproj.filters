@@ -69,9 +69,6 @@
     <ClCompile Include="..\..\LibOS\source\fbFileEnumeratorWin32.c">
       <Filter>LibOS\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\LibOS\source\fbIconMapper.c">
-      <Filter>LibOS\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\LibOS\source\fbUserInputHandler.c">
       <Filter>LibOS\Source Files</Filter>
     </ClCompile>
@@ -126,9 +123,6 @@
     <ClCompile Include="source\appTaskSwitcher.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\appConfigMenu.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\LibOS\source\gcmBlackAndWhiteRenderer.c">
       <Filter>LibOS\Source Files</Filter>
     </ClCompile>
@@ -141,7 +135,16 @@
     <ClCompile Include="resource\sysResource.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\fbIconMapper.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\appGUI.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LibOS\source\cpWin1250.c">
+      <Filter>LibOS\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\appKeyboardSwitcher.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -270,7 +273,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\appGUI.h">
-      <Filter>LibEmu\Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\appKeyboardSwitcher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\appTaskSwitcher.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

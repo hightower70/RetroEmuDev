@@ -158,11 +158,11 @@
     <ClCompile Include="..\..\LibOS\drivers\Win32\drvHighresTimer.c" />
     <ClCompile Include="..\..\LibOS\drivers\Win32\drvSystemTimer.c" />
     <ClCompile Include="..\..\LibOS\drivers\Win32\drvWinMain.c" />
+    <ClCompile Include="..\..\LibOS\source\cpWin1250.c" />
     <ClCompile Include="..\..\LibOS\source\fbBlackAndWhiteRenderer.c" />
     <ClCompile Include="..\..\LibOS\source\fbBuffer.c" />
     <ClCompile Include="..\..\LibOS\source\fbFileBrowser.c" />
     <ClCompile Include="..\..\LibOS\source\fbFileEnumeratorWin32.c" />
-    <ClCompile Include="..\..\LibOS\source\fbIconMapper.c" />
     <ClCompile Include="..\..\LibOS\source\fbUserInputHandler.c" />
     <ClCompile Include="..\..\LibOS\source\fileUtils.c" />
     <ClCompile Include="..\..\LibOS\source\gcmBlackAndWhiteRenderer.c" />
@@ -174,10 +174,11 @@
     <ClCompile Include="..\..\LibOS\source\sysString.c" />
     <ClCompile Include="..\..\LibOS\source\sysTimer.c" />
     <ClCompile Include="resource\sysResource.c" />
-    <ClCompile Include="source\appConfigMenu.c" />
     <ClCompile Include="source\appGUI.c" />
+    <ClCompile Include="source\appKeyboardSwitcher.c" />
     <ClCompile Include="source\appSettings.c" />
     <ClCompile Include="source\appTaskSwitcher.c" />
+    <ClCompile Include="source\fbIconMapper.c" />
     <ClCompile Include="source\sysInitialization.c" />
   </ItemGroup>
   <ItemGroup>
@@ -220,7 +221,9 @@
     <ClInclude Include="..\..\LibOS\include\sysVirtualKeyboardCodes.h" />
     <ClInclude Include="..\..\LibOS\include\waveMixer.h" />
     <ClInclude Include="include\appGUI.h" />
+    <ClInclude Include="include\appKeyboardSwitcher.h" />
     <ClInclude Include="include\appSettings.h" />
+    <ClInclude Include="include\appTaskSwitcher.h" />
     <ClInclude Include="include\sysConfig.h" />
     <ClInclude Include="resource\sysResource.h" />
   </ItemGroup>

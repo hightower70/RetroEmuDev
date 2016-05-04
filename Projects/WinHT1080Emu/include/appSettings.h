@@ -15,6 +15,12 @@
 /* Includes                                                                  */
 /*****************************************************************************/
 #include <sysTypes.h>
+#include <fileUtils.h>
+
+/*****************************************************************************/
+/* Constants                                                                 */
+/*****************************************************************************/
+#define emuHT1080_EM_HT1080Z
 
 /*****************************************************************************/
 /* Types                                                                     */
@@ -24,6 +30,9 @@ typedef struct
 	bool FastCassetteOperation;
 	bool FullSpeed;
 	bool StatisticsVisible;
+	uint8_t EmulatedModel;
+	sysChar CassetteFileName[fileUTIL_MAX_FILENAME_LENGTH];
+	sysChar FileBrowserPath[fileUTIL_MAX_FILENAME_LENGTH];
 } appSettings;
 
 extern appSettings g_application_settings;

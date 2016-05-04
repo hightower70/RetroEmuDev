@@ -28,11 +28,39 @@
 
 //#define fbDEFAULT_FONT REF_FNA_DOS
 
+#define fbBORDER_WIDTH 1
+
+// header settings
+#ifndef fbHEADER_FONT
+#define fbHEADER_FONT fbDEFAULT_FONT
+#endif
+
+#define fbHEADER_BAR_VERTICAL_GAP 2
+#define fbHEADER_BAR_HORIZONTAL_GAP 3
+#define fbHEADER_TEXT_HORIZONTAL_GAP 1
+
+
+// file item settings
+#ifndef fbFILE_LIST_FONT
+#define fbFILE_LIST_FONT fbDEFAULT_FONT
+#endif
+
+#ifndef fbFILE_LIST_ITEM_GAP
+#define fbFILE_LIST_ITEM_GAP 0
+#endif
+
+// footer settings
+#ifndef fbFOOTER_FONT
+#define fbFOOTER_FONT fbDEFAULT_FONT
+#endif
+
+/*
+
 #define fbHEADER_HEIGHT fbFILE_LIST_TOP
 #define fbHEADER_TEXT_HEIGHT 12
 #define fbHEADER_TEXT_LEFT 3
 #define fbHEADER_TEXT_TOP (fbHEADER_HEIGHT - fbHEADER_TEXT_HEIGHT) / 2
-#define fbHEADER_FONT fbDEFAULT_FONT
+
 
 #define fbFILE_LIST_TOP 18
 #define fbFILE_LIST_ITEM_HEIGHT 14
@@ -48,8 +76,15 @@
 #define fbFOOTER_FONT fbDEFAULT_FONT
 
 #define FILE_HEADER_FOOTER_FONT fbFILE_LIST_FONT
+*/
 #define WAIT_INDICATOR_PADDING 5
 #define WAIT_INDICATOR_MARGIN 3
+
+///////////////////////////////////////////////////////////////////////////////
+// Local variables
+static uint8_t l_header_height;
+static uint8_t l_item_height;
+static uint8_t l_displayable_item_count;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Local functions
@@ -60,7 +95,29 @@
 /// @return Number of items (lines) to display.
 uint16_t fbRendererGetDisplayableItemCount(void)
 {
-	return fbFILE_LIST_DISPLAYED_ITEM_COUNT;
+	return l_displayable_item_count;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Initializes rendering engine (calculates and caches dimensions, etc.)
+void fbRendererInit(void)
+{
+	guiSize size;
+
+	// calculate header height
+	guiSetFont(fbHEADER_FONT);
+	size = guiGetTextExtent("Hj");
+	l_header_height = size.Height + 2 * fbHEADER_BAR_VERTICAL_GAP + 2 * fbBORDER_WIDTH + fbBORDER_WIDTH; // text + gap (top, bottom) + rectangle around the text + bottom separator line
+
+	guiSetFont(fbFILE_LIST_FONT);
+	size = guiGetTextExtent("Hj");
+	l_item_height = size.Height + fbFILE_LIST_ITEM_GAP;
+
+	guiSetFont(fbFOOTER_FONT);
+	size = guiGetTextExtent("Hj");
+
+	l_displayable_item_count = (guiSCREEN_HEIGHT - l_header_height - 1 - size.Height - fbBORDER_WIDTH - 1) / l_item_height;
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +129,7 @@ uint16_t fbRendererGetDisplayableItemCount(void)
 uint16_t fbRenderItem(fbFileInformation* in_file_info, uint16_t in_screen_index, bool in_selected, uint16_t in_horizontal_text_offset)
 {
 	sysResourceAddress icon;
-	uint16_t top = fbFILE_LIST_TOP + in_screen_index * fbFILE_LIST_ITEM_HEIGHT;
+	uint16_t top = l_header_height + 1 + in_screen_index * l_item_height;
 	guiSize icon_size;
 	guiSize bracket_size;
 	guiSize text_size;
@@ -83,10 +140,10 @@ uint16_t fbRenderItem(fbFileInformation* in_file_info, uint16_t in_screen_index,
 	if(in_file_info == sysNULL)
 	{
 		// open canvas
-		guiOpenCanvas( 0, top, guiSCREEN_WIDTH-1, top + fbFILE_LIST_ITEM_HEIGHT);
+		guiOpenCanvas( 0, top, guiSCREEN_WIDTH-1, top + l_item_height);
 
 		guiSetSystemBrush(0);
-		guiFillRectangle(0, top, guiSCREEN_WIDTH-1, top + fbFILE_LIST_ITEM_HEIGHT);
+		guiFillRectangle(0, top, guiSCREEN_WIDTH-1, top + l_item_height);
 
 		// close canvas
 		guiCloseCanvas(true);
@@ -100,7 +157,10 @@ uint16_t fbRenderItem(fbFileInformation* in_file_info, uint16_t in_screen_index,
 		bracket_size.Height = 0;
 
 		// open canvas
-		guiOpenCanvas( 0, top, guiSCREEN_WIDTH-1, top + fbFILE_LIST_ITEM_HEIGHT);
+		guiOpenCanvas( 0, top, guiSCREEN_WIDTH-1, top + l_item_height);
+
+		guiSetFont(fbFILE_LIST_FONT);
+		text_size = guiGetTextExtent("Hj");
 
 		// clear background
 		if(in_selected)
@@ -116,7 +176,7 @@ uint16_t fbRenderItem(fbFileInformation* in_file_info, uint16_t in_screen_index,
 			guiSetSystemBrush(0);
 		}
 
-		guiFillRectangle(0, top, guiSCREEN_WIDTH-1, top + fbFILE_LIST_ITEM_HEIGHT);
+		guiFillRectangle(0, top, guiSCREEN_WIDTH-1, top + text_size.Height);
 
 		// draw icon
 		icon_size.Width = 0;
@@ -125,12 +185,10 @@ uint16_t fbRenderItem(fbFileInformation* in_file_info, uint16_t in_screen_index,
 		if(icon != sysNULL)
 		{
 			icon_size = guiGetBitmapSize(icon);
-			guiDrawBitmap(1, top + (fbFILE_LIST_ITEM_HEIGHT - icon_size.Height + 1) / 2, icon);
+			guiDrawBitmap(1, top + (l_item_height - fbFILE_LIST_ITEM_GAP - icon_size.Height) / 2, icon);
 		}
 
 		// display name
-		guiSetFont(fbFILE_LIST_FONT);
-
 		if((in_file_info->Flags & fbFF_FOLDER) != 0)
 		{
 			bracket_size = guiGetTextExtent("[");
@@ -138,7 +196,7 @@ uint16_t fbRenderItem(fbFileInformation* in_file_info, uint16_t in_screen_index,
 
 		text_size = guiGetTextExtent(in_file_info->FileName);
 		clipping_rect.Left = icon_size.Width + 2;
-		clipping_rect.Top = top + 2;
+		clipping_rect.Top = top + fbFILE_LIST_ITEM_GAP / 2;
 		clipping_rect.Right = guiSCREEN_WIDTH - 1;
 		clipping_rect.Bottom = clipping_rect.Top + text_size.Height;
 
@@ -181,28 +239,34 @@ void fbRenderHeader(sysString in_title, sysString in_path)
 	sysChar path[fileMAX_PATH+1];
 	bool repeat;
 
+	// calculate coordinates
+	guiSetFont(fbHEADER_FONT);
+	size = guiGetTextExtent("Hj");
+
 	// store path
 	strCopyString(path, fileMAX_PATH, 0, in_path);
 
 	// open canvas
-	guiOpenCanvas( 0, 0, guiSCREEN_WIDTH-1, fbHEADER_HEIGHT);
+	guiOpenCanvas( 0, 0, guiSCREEN_WIDTH-1, l_header_height);
 
 	// separator line
 	guiSetPen(1);
-	guiDrawHorizontalLine(0, guiSCREEN_WIDTH-1, fbHEADER_HEIGHT - 1);
+	guiDrawHorizontalLine(0, guiSCREEN_WIDTH-1, l_header_height - 1);
 
 	// background
 	guiSetSystemBrush(1);
-	guiFillRectangle(0, 0, guiSCREEN_WIDTH-1, fbHEADER_HEIGHT - 2);
+	guiFillRectangle(0, 0, guiSCREEN_WIDTH-1, l_header_height - 2);
 
-	guiSetFont(fbHEADER_FONT);
+	// empty line
+	guiSetPen(0);
+	guiDrawHorizontalLine(0, guiSCREEN_WIDTH - 1, l_header_height);
 
 	// shorten path
 	do
 	{
 		repeat = false;
 		size = guiGetTextExtent(path);
-		if( size.Width > guiSCREEN_WIDTH - 6 )
+		if( size.Width > guiSCREEN_WIDTH - 1 - 2 * fbHEADER_BAR_HORIZONTAL_GAP + 2 * fbBORDER_WIDTH + 2 * fbHEADER_TEXT_HORIZONTAL_GAP)
 		{
 			if(!fileShortenDisplayPath(path, fileMAX_PATH))
 				repeat = false;
@@ -214,14 +278,14 @@ void fbRenderHeader(sysString in_title, sysString in_path)
 
 	// text box
 	guiSetPen(1);
-	guiDrawRectangle(fbHEADER_TEXT_LEFT - 1, fbHEADER_TEXT_TOP - 2, guiSCREEN_WIDTH - fbHEADER_TEXT_LEFT, fbHEADER_TEXT_TOP + fbHEADER_TEXT_HEIGHT + 1);
+	guiDrawRectangle(fbHEADER_BAR_HORIZONTAL_GAP, fbHEADER_BAR_VERTICAL_GAP, guiSCREEN_WIDTH - 1 - fbHEADER_BAR_HORIZONTAL_GAP, fbHEADER_BAR_VERTICAL_GAP + size.Height + 2 * fbBORDER_WIDTH - 1);
 
 	guiSetSystemBrush(0);
-	guiFillRectangle(fbHEADER_TEXT_LEFT, fbHEADER_TEXT_TOP - 1, guiSCREEN_WIDTH - fbHEADER_TEXT_LEFT - 1, fbHEADER_TEXT_TOP + fbHEADER_TEXT_HEIGHT);
+	guiFillRectangle(fbHEADER_BAR_HORIZONTAL_GAP + fbBORDER_WIDTH, fbHEADER_BAR_VERTICAL_GAP + fbBORDER_WIDTH, guiSCREEN_WIDTH - 1 - fbHEADER_BAR_HORIZONTAL_GAP - fbBORDER_WIDTH, fbHEADER_BAR_VERTICAL_GAP + size.Height + fbBORDER_WIDTH - 1);
 
 	// write path
-	guiSetClipping(fbHEADER_TEXT_LEFT + 1, fbHEADER_TEXT_TOP, guiSCREEN_WIDTH - fbHEADER_TEXT_LEFT - 2, fbHEADER_TEXT_TOP + fbHEADER_TEXT_HEIGHT);
-	guiDrawText(fbHEADER_TEXT_LEFT + 1, fbHEADER_TEXT_TOP, path);
+	guiSetClipping(fbHEADER_BAR_HORIZONTAL_GAP + fbBORDER_WIDTH, fbHEADER_BAR_VERTICAL_GAP + fbBORDER_WIDTH, guiSCREEN_WIDTH - 1 - fbHEADER_BAR_HORIZONTAL_GAP - fbBORDER_WIDTH, fbHEADER_BAR_VERTICAL_GAP + size.Height + fbBORDER_WIDTH - 1);
+	guiDrawText(fbHEADER_BAR_HORIZONTAL_GAP + fbBORDER_WIDTH + fbHEADER_TEXT_HORIZONTAL_GAP, fbHEADER_BAR_VERTICAL_GAP + fbBORDER_WIDTH, path);
 	guiResetClipping();
 
 	// close canvas
@@ -240,26 +304,31 @@ void fbRenderFooter(uint16_t in_file_index, uint16_t in_file_count, fbFileInform
 	guiSize counter_size;
 	guiSize datetime_size;
 	guiSize filesize_size;
+	guiCoordinate footer_top = l_header_height + 1 + l_item_height * l_displayable_item_count;
+	guiSize font_size;
+	guiCoordinate footer_text_top;
 
 	// open canvas
-	guiOpenCanvas( 0, fbFOOTER_TOP, guiSCREEN_WIDTH-1, guiSCREEN_HEIGHT-1);
-
-	guiSetPen(1);
-	guiDrawHorizontalLine(0,guiSCREEN_WIDTH-1, fbFOOTER_TOP);
+	guiOpenCanvas( 0, footer_top, guiSCREEN_WIDTH-1, guiSCREEN_HEIGHT-1);
 
 	guiSetSystemBrush(0);
-	guiFillRectangle(0, fbFOOTER_TOP + 1, guiSCREEN_WIDTH-1, guiSCREEN_HEIGHT-1);
+	guiFillRectangle(0, footer_top, guiSCREEN_WIDTH - 1, guiSCREEN_HEIGHT - 1);
+
+	guiSetPen(1);
+	guiDrawHorizontalLine(0,guiSCREEN_WIDTH-1, footer_top + 1);
 
 	guiSetPen(1);
 
 	guiSetFont(fbFOOTER_FONT);
+	font_size = guiGetTextExtent("Hj");
 
 	// display count
 	pos = strWordToString(buffer, STRING_BUFFER_LENGTH, in_file_index, 0, 0, 0);
 	pos = strCopyConstString(buffer, STRING_BUFFER_LENGTH, pos, (sysConstString)"/");
 	pos = strWordToStringPos(buffer, STRING_BUFFER_LENGTH, pos, in_file_count, 0, 0, 0);
 	counter_size = guiGetTextExtent(buffer);
-	guiDrawText( 1, fbFOOTER_TOP + 2 + (guiSCREEN_HEIGHT - fbFOOTER_TOP - fbFOOTER_TEXT_HEIGHT) / 2, buffer);
+	footer_text_top = footer_top + 1 + fbBORDER_WIDTH + 1 + (guiSCREEN_HEIGHT - footer_top - 1 - font_size.Height) / 2;
+	guiDrawText( 1, footer_text_top, buffer);
 
 	if(in_file_info != sysNULL)
 	{
@@ -271,14 +340,14 @@ void fbRenderFooter(uint16_t in_file_index, uint16_t in_file_count, fbFileInform
 		pos = strCopyConstString(buffer, STRING_BUFFER_LENGTH, pos, (sysConstString)":");
 		pos = strWordToStringPos(buffer, STRING_BUFFER_LENGTH, pos, in_file_info->DateTime.Minute, 2, 0, TS_NO_ZERO_BLANKING);
 		datetime_size = guiGetTextExtent(buffer);
-		guiDrawText( guiSCREEN_WIDTH - datetime_size.Width, fbFOOTER_TOP + 2 + (guiSCREEN_HEIGHT - fbFOOTER_TOP - fbFOOTER_TEXT_HEIGHT) / 2, buffer);
+		guiDrawText( guiSCREEN_WIDTH - datetime_size.Width, footer_text_top, buffer);
 	
 		// display size (only for files)
 		if((in_file_info->Flags & BV(fbFF_FOLDER_FILE_BIT)) == fbFF_FILE)
 		{
 			fileSizeToString(buffer, STRING_BUFFER_LENGTH, in_file_info->Size);
 			filesize_size = guiGetTextExtent(buffer);
-			guiDrawText( (guiSCREEN_WIDTH + counter_size.Width - datetime_size.Width - filesize_size.Width) / 2, fbFOOTER_TOP + 2 + (guiSCREEN_HEIGHT - fbFOOTER_TOP - fbFOOTER_TEXT_HEIGHT) / 2, buffer);
+			guiDrawText( (guiSCREEN_WIDTH + counter_size.Width - datetime_size.Width - filesize_size.Width) / 2, footer_text_top, buffer);
 		}
 	}
 

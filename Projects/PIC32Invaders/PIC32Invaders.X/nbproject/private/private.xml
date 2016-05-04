@@ -1,3 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?><project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/D:/Projects/STM32F429/FileBrowser/Projects/PIC32Invaders/source/sysInitialization.c</file>
+        <file>file:/D:/Projects/STM32F429/FileBrowser/Projects/PIC32Invaders/source/main.c</file>
+        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/drivers/PIC32/source/drvHighresTimer.c</file>
+        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/source/sysTimer.c</file>
+        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/source/sysHighResTimer.c</file>
+        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/drivers/PIC32/source/drvPMP8.c</file>
+        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/source/guiColorGraphics.c</file>
+        <file>file:/D:/Projects/STM32F429/FileBrowser/LibOS/drivers/PIC32/source/drvSystemTimer.c</file>
+        <file>file:/D:/Projects/STM32F429/FileBrowser/LibEmu/source/hwInvaders.c</file>
+        <file>file:/D:/Projects/STM32F429/FileBrowser/Projects/PIC32Invaders/include/sysConfig.h</file>
+        <file>file:/D:/Projects/STM32F429/FileBrowser/LibEmu/source/scrInvaders16bpp.c</file>
+    </open-files>
 </project-private>

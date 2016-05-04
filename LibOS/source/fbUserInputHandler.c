@@ -8,7 +8,7 @@ void fbUserInputEventHandler(uint8_t in_device_number, sysUserInputEventCategory
 	if (fbGetStatus() < fbs_Active)
 		return;
 
-	if(in_device_number == 1 && in_event_category == sysUIEC_Pressed)
+	if(in_device_number == 1 && (in_event_category == sysUIEC_Pressed || in_event_category == sysUIEC_Repeated))
 	{
 		switch(in_event_type)
 		{
@@ -36,7 +36,7 @@ void fbUserInputEventHandler(uint8_t in_device_number, sysUserInputEventCategory
 			case sysUIET_Key:
 				if(sysVKC_IS_SPECIAL_KEY(in_event_param))
 				{
-					switch (in_event_param & (~sysVKC_SPECIAL_KEY_FLAG))
+					switch (sysVKC_KEY_CODE(in_event_param))
 					{
 						case sysVKC_DOWN:
 							fbSelectionMove(1);

@@ -27,5 +27,7 @@ void fbRenderFooter(uint16_t in_file_index, uint16_t in_file_count, fbFileInform
 void fbRenderWaitIndicatorShow(void);
 void fbRenderWaitIndicatorNext(uint8_t* in_current_phase);
 void fbRefreshScreen(void);
+void fbRendererInit(void);
+
 
 #endif

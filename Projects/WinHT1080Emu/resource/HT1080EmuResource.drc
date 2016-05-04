@@ -19,11 +19,10 @@
 ; ***************
 -bitmap:ArrowLeft.bmp,BMP_ARROW_LEFT
 -bitmap:ArrowRight.bmp,BMP_ARROW_RIGHT
--bitmap:file_12_8.bmp,BMP_FILE
--bitmap:file_audio_12_8.bmp,BMP_AUDIO
--bitmap:file_music_12_8.bmp,BMP_MUSIC
--bitmap:up_12_8.bmp,BMP_UP
--bitmap:folder_12_8.bmp, BMP_FOLDER
+-bitmap:file_12_12.bmp,BMP_FILE
+-bitmap:file_cassette_12_12.bmp,BMP_CASSETTE
+-bitmap:up_12_12.bmp,BMP_UP
+-bitmap:folder_12_12.bmp, BMP_FOLDER
 -bitmap:progress0.bmp, BMP_PROGRESS0
 -bitmap:progress1.bmp, BMP_PROGRESS1
 -bitmap:progress2.bmp, BMP_PROGRESS2

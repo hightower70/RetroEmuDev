@@ -14,6 +14,8 @@
 #include <sysVirtualKeyboardCodes.h>
 #include <gcmGraphicsConfigMenu.h>
 
+///////////////////////////////////////////////////////////////////////////////
+/// @brief User input handler function for Graphical Configuration Menu
 void gcmUserInputEventHandler(uint8_t in_device_number, sysUserInputEventCategory in_event_category, sysUserInputEventType in_event_type, uint32_t in_event_param)
 {
 	// if busy or inactive do nothing

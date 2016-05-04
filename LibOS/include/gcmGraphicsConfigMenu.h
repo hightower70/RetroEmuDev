@@ -15,6 +15,7 @@
 // Includes
 #include <sysTypes.h>
 #include <guiTypes.h>
+#include <sysUserInput.h>
 #include "sysConfig.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,6 +70,6 @@ bool gcmSetItemValueAsUInt(uint8_t in_item_index, uint32_t in_value);
 bool gcmIsActive(void);
 void gcmSelectionMove(int16_t in_offset);
 void gcmCurrentValueChange(int16_t in_offset);
-
+void gcmUserInputEventHandler(uint8_t in_device_number, sysUserInputEventCategory in_event_category, sysUserInputEventType in_event_type, uint32_t in_event_param);
 
 #endif

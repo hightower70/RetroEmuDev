@@ -34,4 +34,5 @@ typedef int sysResourceAddress;
 ///////////////////////////////////////////////////////////////////////////////
 // FIle browser config
 #define fbDEFAULT_FONT REF_FNA_HT1080
+#define fbFILE_LIST_ITEM_GAP 1
 #endif

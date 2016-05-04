@@ -212,6 +212,8 @@ void fbActivate(sysString in_path)
 {
 	strCopyString(l_current_path, fileMAX_PATH, 0, in_path);
 	fbBufferClear();
+	fbRendererInit();
+
 	l_status = fbs_ParseStart;
 }
 

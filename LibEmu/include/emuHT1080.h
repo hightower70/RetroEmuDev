@@ -27,7 +27,7 @@
 #define emuHT1080_CPU_CLK 1774080 // CPU clock in MHz
 #define emuHT1080_HSYNC_FREQ 15840 // Horizontal sync freq
 #define emuHT1080_TOTAL_SCANLINE_COUNT 312 // @50Hz VSYNC freq.
-//#define emuHT1080_TOTAL_SCANLINE_COUNT 216 // @60Hz VSYNC freq.
+//#define emuHT1080_TOTAL_SCANLINE_COUNT 264 // @60Hz VSYNC freq.
 
 //////////////////////
 // HT1080 memory sizes
@@ -56,10 +56,19 @@
 /* Function prototypes                                                       */
 /*****************************************************************************/
 
-void emuHT1080Initialize(void);
-void emuHT1080Task(void);
-void emuHT1080RenderScanLine(uint16_t in_line_index);
-void emuHT1080UserInputEventHandler(uint8_t in_device_number, sysUserInputEventCategory in_event_category, sysUserInputEventType in_event_type, uint32_t in_event_param);
+void emuInitialize(void);
+void emuTask(void);
+void emuRefreshScreen(void);
+void emuUserInputEventHandler(uint8_t in_device_number, sysUserInputEventCategory in_event_category, sysUserInputEventType in_event_type, uint32_t in_event_param);
+void emuReset(void);
+void emuNMI(void);
+
+void emuHT1080StartScreenRefresh(void);
+void emuHT1080EndScreenrefresh(void);
+void emuHT1080RenderCharacter(uint16_t in_video_memory_address);
+
+void emuUpdateStatistics(uint32_t in_measured_inteval_in_ms);
+void emuResetStatistics(void);
 
 /*****************************************************************************/
 /* Variables for other modules                                               */
@@ -67,5 +76,10 @@ void emuHT1080UserInputEventHandler(uint8_t in_device_number, sysUserInputEventC
 
 extern uint8_t g_ram[];
 extern uint8_t g_video_ram[];
+extern uint8_t g_screen_no_refresh_area[];
+
+extern uint16_t g_emulation_speed_cpu_freq;
+extern uint16_t g_emulation_speed_vsync_freq;
+
 
 #endif

@@ -24,7 +24,7 @@ void sysInitialization(void)
 
 	fbBufferSet(g_buffer, (uint32_t)sizeof(g_buffer));
 
-	emuHT1080Initialize();
+	emuInitialize();
 
 	//fbActivate("c:");
 }
