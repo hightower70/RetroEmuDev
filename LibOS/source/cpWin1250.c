@@ -1,5 +1,5 @@
 /*****************************************************************************/
-/* Win1250 Codaepage handling functions                                      */
+/* Win1250 Codepage handling functions                                       */
 /*                                                                           */
 /* Copyright (C) 2015 Laszlo Arvai                                           */
 /* All rights reserved.                                                      */
@@ -272,7 +272,7 @@ static const KeymapTableEntry l_keymap_table[256] =
 
 	{ 0x00,		0x00,		0x00 },	// 0xE0
 	{ 0x00,		0x00,		0x00 },	// 0xE1
-	{ 0xED,		0xCD,		0x00 },	// 0xE2 sysVKC_OEM_102
+	{ 0xED,		0xCD,		 '<' },	// 0xE2 sysVKC_OEM_102
 	{ 0x00,		0x00,		0x00 },	// 0xE3
 	{ 0x00,		0x00,		0x00 },	// 0xE4
 	{ 0x00,		0x00,		0x00 },	// 0xE5 sysVKC_PROCESSKEY
@@ -306,6 +306,13 @@ static const KeymapTableEntry l_keymap_table[256] =
 
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Converts keyboard character events to Win1250 encoded character
+/// @param in_device_number Number of the device which generated the event
+/// @param in_event_category Category of the event. Only 'press' and 'release' events will be processed
+/// @param in_event_type Type of the event. Only keyboard events will be processed.
+/// @param in_event_param Scan code of the key
+/// @return Win1250 encoded character or sysVKC_NULL if the pressed key is not a valid Win1250 character
 sysChar cpConvertWin1250(uint8_t in_device_number, sysUserInputEventCategory in_event_category, sysUserInputEventType in_event_type, uint32_t in_event_param)
 {
 	uint32_t modifier_state = sysUserInputGetModifiersState(in_device_number);
@@ -326,6 +333,10 @@ sysChar cpConvertWin1250(uint8_t in_device_number, sysUserInputEventCategory in_
 	return sysVKC_NULL;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Converts win1250 encoded characters to uppercase character
+/// @param in_char Character to convert
+/// @return Converted character
 sysChar cpToUpperWin1250(sysChar in_char)
 {
 	if (in_char >= 'a' && in_char <= 'z')

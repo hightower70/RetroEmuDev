@@ -9,17 +9,18 @@
 /* of the BSD license.  See the LICENSE file for details.                    */
 /*****************************************************************************/
 
-///////////////////////////////////////////////////////////////////////////////
-// Includes
-#include <guiBlackAndWhiteGraphics.h>
+/*****************************************************************************/
+/* Includes                                                                  */
+/*****************************************************************************/
 #include <fbRenderer.h>
 #include <sysResource.h>
 #include <fbIconMapper.h>
 #include <fileUtils.h>
 #include "sysConfig.h"
 
-///////////////////////////////////////////////////////////////////////////////
-// Constats
+/*****************************************************************************/
+/* Constants                                                                 */
+/*****************************************************************************/
 #define STRING_BUFFER_LENGTH 20
 
 #if !defined(fbDEFAULT_FONT)
@@ -54,41 +55,19 @@
 #define fbFOOTER_FONT fbDEFAULT_FONT
 #endif
 
-/*
-
-#define fbHEADER_HEIGHT fbFILE_LIST_TOP
-#define fbHEADER_TEXT_HEIGHT 12
-#define fbHEADER_TEXT_LEFT 3
-#define fbHEADER_TEXT_TOP (fbHEADER_HEIGHT - fbHEADER_TEXT_HEIGHT) / 2
-
-
-#define fbFILE_LIST_TOP 18
-#define fbFILE_LIST_ITEM_HEIGHT 14
-#define fbFILE_LIST_DISPLAYED_ITEM_COUNT ((guiSCREEN_HEIGHT - fbFILE_LIST_TOP - fbFOOTER_MIN_HEIGHT) / fbFILE_LIST_ITEM_HEIGHT)
-#define fbFILE_LIST_HEIGHT (fbFILE_LIST_ITEM_HEIGHT * fbFILE_LIST_DISPLAYED_ITEM_COUNT)
-#define fbFILE_LIST_FONT fbDEFAULT_FONT
-
-#define fbFOOTER_TEXT_HEIGHT 12
-#define fbFOOTER_TEXT_LEFT 2
-#define fbFOOTER_MIN_HEIGHT 11
-#define fbFOOTER_TOP (fbFILE_LIST_TOP + fbFILE_LIST_HEIGHT + 1)
-#define fbFOOTER_HEIGHT (guiSCREEN_HEIGHT - fbFOOTER_TOP)
-#define fbFOOTER_FONT fbDEFAULT_FONT
-
-#define FILE_HEADER_FOOTER_FONT fbFILE_LIST_FONT
-*/
 #define WAIT_INDICATOR_PADDING 5
 #define WAIT_INDICATOR_MARGIN 3
 
-///////////////////////////////////////////////////////////////////////////////
-// Local variables
+/*****************************************************************************/
+/* Local variables                                                           */
+/*****************************************************************************/
 static uint8_t l_header_height;
 static uint8_t l_item_height;
 static uint8_t l_displayable_item_count;
 
-///////////////////////////////////////////////////////////////////////////////
-// Local functions
-
+/*****************************************************************************/
+/* Rendering functions                                                       */
+/*****************************************************************************/
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Gets number of file items to display. It depens on the height of the screen and the height of the header and footer.
@@ -373,22 +352,19 @@ void fbRenderWaitIndicatorShow(void)
 	guiCoordinate x1,y1;
 	guiCoordinate x2,y2;
 
-	size = guiGetBitmapSize(REF_BMP_PROGRESS0);
-
-	// clear background
-	x1 = (guiSCREEN_WIDTH/2) - (size.Width + 2 * WAIT_INDICATOR_MARGIN + 2 * WAIT_INDICATOR_PADDING) / 2;
-	y1 = (guiSCREEN_HEIGHT/2) - (size.Height + 2 * WAIT_INDICATOR_MARGIN + 2 * WAIT_INDICATOR_PADDING) / 2;
-
-	x2 = (guiSCREEN_WIDTH/2) + (size.Width + 2 * WAIT_INDICATOR_MARGIN + 2 * WAIT_INDICATOR_PADDING) / 2;
-	y2 = (guiSCREEN_HEIGHT/2) + (size.Height + 2 * WAIT_INDICATOR_MARGIN + 2 * WAIT_INDICATOR_PADDING) / 2;
+	// get indicator area
+	fbRenderGetWaitIndicatorRect(&x1, &y1, &x2, &y2);
 
 	// open canvas
 	guiOpenCanvas( x1, y1, x2, y2);
 
+	// clear background
 	guiSetSystemBrush(0);
 	guiFillRectangle(x1, y1, x2, y2);
 
 	// draw border
+	size = guiGetBitmapSize(REF_BMP_PROGRESS0);
+
 	x1 = (guiSCREEN_WIDTH/2) - (size.Width + 2 * WAIT_INDICATOR_PADDING) / 2;
 	y1 = (guiSCREEN_HEIGHT/2) - (size.Height + 2 * WAIT_INDICATOR_PADDING) / 2;
 
@@ -406,6 +382,22 @@ void fbRenderWaitIndicatorShow(void)
 
 	// close canvas
   guiCloseCanvas(true);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Gets wait indicator area coordinates
+void fbRenderGetWaitIndicatorRect(guiCoordinate* out_left, guiCoordinate* out_top, guiCoordinate* out_right, guiCoordinate* out_bottom)
+{
+	guiSize size;
+
+	size = guiGetBitmapSize(REF_BMP_PROGRESS0);
+
+	// clear background
+	*out_left = (guiSCREEN_WIDTH / 2) - (size.Width + 2 * WAIT_INDICATOR_MARGIN + 2 * WAIT_INDICATOR_PADDING) / 2;
+	*out_top = (guiSCREEN_HEIGHT / 2) - (size.Height + 2 * WAIT_INDICATOR_MARGIN + 2 * WAIT_INDICATOR_PADDING) / 2;
+
+	*out_right = (guiSCREEN_WIDTH / 2) + (size.Width + 2 * WAIT_INDICATOR_MARGIN + 2 * WAIT_INDICATOR_PADDING) / 2;
+	*out_bottom = (guiSCREEN_HEIGHT / 2) + (size.Height + 2 * WAIT_INDICATOR_MARGIN + 2 * WAIT_INDICATOR_PADDING) / 2;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -434,3 +426,4 @@ void fbRenderWaitIndicatorNext(uint8_t* in_current_phase)
 	// close canvas
   guiCloseCanvas(true);
 }
+

@@ -47,7 +47,7 @@ void sysMainTask(void)
 		case appAM_Emulation:
 			emuTask();
 
-			// update amulation statistics
+			// update emulation statistics
 			if (g_application_settings.StatisticsVisible)
 			{
 				emulaton_statistics_time = sysTimerGetTimeSince(l_emulation_statistics_timestamp);

@@ -2,7 +2,7 @@
 /* HT1080Z Emulator                                                          */
 /*   main hardware emulation                                                 */
 /*                                                                           */
-/* Copyright (C) 2015 Laszlo Arvai                                           */
+/* Copyright (C) 2015-2016 Laszlo Arvai                                      */
 /* All rights reserved.                                                      */
 /*                                                                           */
 /* This software may be modified and distributed under the terms             */
@@ -23,6 +23,8 @@
 #include <appSettings.h>
 #include <cpCodePages.h>
 #include <fbFileBrowser.h>
+#include <guiBlackAndWhiteGraphics.h>
+#include <fbRenderer.h>
 
 /*****************************************************************************/
 /* Constants                                                                 */
@@ -64,6 +66,10 @@ typedef enum
 static uint32_t cpuGetEllapsedTimeSince(uint32_t in_timestamp);
 static uint32_t cpuGetEllapsedTimeSinceInMicrosec(uint32_t in_timestamp);
 static uint32_t cpuGetTimestamp(void);
+
+static uint8_t emuPixelToCharacterX(guiCoordinate in_coord);
+static uint8_t emuPixelToCharacterY(guiCoordinate in_coord);
+
 
 static void emuCASMotorOn(void);
 static void emuCASMotorOff(void);
@@ -117,6 +123,15 @@ uint16_t g_emulation_speed_vsync_freq;
 
 // screean area refresh disable array
 uint8_t g_screen_no_refresh_area[emuHT1080_VIDEO_RAM_SIZE];
+
+/*****************************************************************************/
+/* Function implementation                                                   */
+/*****************************************************************************/
+
+/*****************************************************************************/
+/* Emulation routines                                                        */
+/*****************************************************************************/
+#pragma region - Emulation routines -
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Initializes HT1080Z Computer
@@ -301,6 +316,105 @@ void emuNMI(void)
 {
 	cpuInt(&l_cpu, INT_NMI);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Defines an area where emulation screen refresh is prohibited
+/// @param in_left Left character coorindate of the area (inclusive)
+/// @param in_top Top character coorindate of the area (inclusive)
+/// @param in_right Right character coorindate of the area (inclusive)
+/// @param in_bottom Bottom character coorindate of the area (inclusive)
+void emuDisableScreenRefresh(uint8_t in_left, uint8_t in_top, uint8_t in_right, uint8_t in_bottom)
+{
+	uint8_t row, column;
+
+	for (row = in_top; row <= in_bottom; row++)
+	{
+		for (column = in_left; column <= in_right; column++)
+		{
+			g_screen_no_refresh_area[row * emuHT1080_SCREEN_WIDTH_IN_CHARACTER + column]++;
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Reenables emulation screen refresh for the given area
+/// @param in_left Left character coorindate of the area (inclusive)
+/// @param in_top Top character coorindate of the area (inclusive)
+/// @param in_right Right character coorindate of the area (inclusive)
+/// @param in_bottom Bottom character coorindate of the area (inclusive)
+void emuEnableScreenRefresh(uint8_t in_left, uint8_t in_top, uint8_t in_right, uint8_t in_bottom)
+{
+	uint8_t row, column;
+	uint16_t address;
+
+	for (row = in_top; row <= in_bottom; row++)
+	{
+		for (column = in_left; column <= in_right; column++)
+		{
+			address = row * emuHT1080_SCREEN_WIDTH_IN_CHARACTER + column;
+			if (g_screen_no_refresh_area[address] > 0)
+				g_screen_no_refresh_area[address]--;
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Shows wait indicator (and disables emulator screen refresh)
+void emuWaitIndicatorShow(void)
+{
+	guiCoordinate left, top, right, bottom;
+	uint8_t scr_left, scr_top, scr_right, scr_bottom;
+
+	fbRenderGetWaitIndicatorRect(&left, &top, &right, &bottom);
+
+	scr_left = emuPixelToCharacterX(left);
+	scr_top = emuPixelToCharacterY(top);
+	scr_right = emuPixelToCharacterX(right);
+	scr_bottom = emuPixelToCharacterY(bottom);
+
+	emuDisableScreenRefresh(scr_left, scr_top, scr_right, scr_bottom);
+
+	fbWaitIndicatorShow();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Hides wait indicator (and enables emulator screen refresh)
+void emuWaitIndicatorHide(void)
+{
+	guiCoordinate left, top, right, bottom;
+	uint8_t scr_left, scr_top, scr_right, scr_bottom;
+
+	fbRenderGetWaitIndicatorRect(&left, &top, &right, &bottom);
+
+	scr_left = emuPixelToCharacterX(left);
+	scr_top = emuPixelToCharacterY(top);
+	scr_right = emuPixelToCharacterX(right);
+	scr_bottom = emuPixelToCharacterY(bottom);
+
+	emuEnableScreenRefresh(scr_left, scr_top, scr_right, scr_bottom);
+
+	fbWaitIndicatorHide();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Converts from pixel coordinates to character coordinates in X direction
+/// @param in_coord Coordinate in pixels to convert
+/// @return Converted (character) coordinate 
+static uint8_t emuPixelToCharacterX(guiCoordinate in_coord)
+{
+	return (uint8_t )(in_coord / emuHT1080_CHARACTER_WIDTH);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Converts from pixel coordinates to character coordinates in Y direction
+/// @param in_coord Coordinate in pixels to convert
+/// @return Converted (character) coordinate 
+static uint8_t emuPixelToCharacterY(guiCoordinate in_coord)
+{
+	return (uint8_t )(in_coord / emuHT1080_CHARACTER_HEIGHT);
+}
+
+#pragma endregion 
 
 /*****************************************************************************/
 /* Statistics routines                                                       */
@@ -707,7 +821,7 @@ void emuUserInputEventHandler(uint8_t in_device_number, sysUserInputEventCategor
 			// if it can be converter to character
 			ch = cpToUpperWin1250(ch);
 
-			if (ch < 128 && ch >= 0)
+			if ((uint8_t)ch < 128 && (uint8_t)ch >= 0)
 			{
 				keyboard_table_entry = l_keyboard_table[(uint8_t)ch];
 			}
@@ -875,7 +989,7 @@ static void emuCASMotorOn(void)
 	// handle fast cassette operation
 	if (g_application_settings.FastCassetteOperation)
 	{
-		fbWaitIndicatorShow();
+		emuWaitIndicatorShow();
 	}
 
 	l_cas_motor_on = true;
@@ -902,7 +1016,7 @@ static void emuCASMotorOff(void)
 	l_cas_motor_on = false;
 	l_cas_state = emuCS_Idle;
 
-	fbWaitIndicatorHide();
+	emuWaitIndicatorHide();
 	emuRefreshScreen();
 }
 

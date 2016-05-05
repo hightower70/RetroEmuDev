@@ -1,3 +1,16 @@
+/*****************************************************************************/
+/* Application specific GUI routies                                          */
+/*                                                                           */
+/* Copyright (C) 2015 Laszlo Arvai                                           */
+/* All rights reserved.                                                      */
+/*                                                                           */
+/* This software may be modified and distributed under the terms             */
+/* of the BSD license.  See the LICENSE file for details.                    */
+/*****************************************************************************/
+
+/*****************************************************************************/
+/* Includes                                                                  */
+/*****************************************************************************/
 #include <guiBlackAndWhiteGraphics.h>
 #include <gcmGraphicsConfigMenu.h>
 #include <gcmRenderer.h>
@@ -6,11 +19,15 @@
 #include <emuHT1080.h>
 #include "sysResource.h"
 
-
+/*****************************************************************************/
+/* Constants                                                                 */
+/*****************************************************************************/
 #define BUFFER_LENGTH 20
 #define emuHTCAS_FILENAME_POSITION 28 * emuHT1080_CHARACTER_WIDTH
 
-
+/*****************************************************************************/
+/* Configuration menu                                                        */
+/*****************************************************************************/
 #pragma region - Configuration menu -
 
 gcmMenuItem g_config_menu[] =
@@ -82,14 +99,15 @@ void appCloseConfigMenu(void)
 
 #pragma endregion
 
+/*****************************************************************************/
+/* Statistics panel                                                          */
+/*****************************************************************************/
 #pragma region - Statistics panel -
-
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Shows/Hides statistics panel based on the current configuration setting
 void appShowHideStatistics(void)
 {
-	uint16_t address;
 	bool repeat;
 	guiSize size;
 	sysChar buffer[fileUTIL_MAX_FILENAME_LENGTH];
@@ -97,8 +115,7 @@ void appShowHideStatistics(void)
 	if (g_application_settings.StatisticsVisible)
 	{
 		// disable emulator refreshing of the first (topmost) line
-		for (address = 0; address < emuHT1080_SCREEN_WIDTH_IN_CHARACTER; address++)
-			g_screen_no_refresh_area[address]++;
+		emuDisableScreenRefresh(0, 0, emuHT1080_SCREEN_WIDTH_IN_CHARACTER - 1, 0);
 
 		// create fixel graphical elements
 		guiOpenCanvas(0, 0, guiSCREEN_WIDTH - 1, emuHT1080_CHARACTER_HEIGHT - 1);
@@ -144,18 +161,14 @@ void appShowHideStatistics(void)
 	else
 	{
 		// enable emulator refresh of the topmost line
-		for (address = 0; address < emuHT1080_SCREEN_WIDTH_IN_CHARACTER; address++)
-		{
-			if (g_screen_no_refresh_area[address] > 0)
-			{
-				g_screen_no_refresh_area[address]--;
-			}
-		}
+		emuEnableScreenRefresh(0, 0, emuHT1080_SCREEN_WIDTH_IN_CHARACTER - 1, 0);
 
 		emuRefreshScreen();
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Refreshes content of the statistics panel
 void appRefreshStatistics(void)
 {
 	sysChar buffer[BUFFER_LENGTH];

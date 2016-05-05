@@ -62,6 +62,8 @@ void emuRefreshScreen(void);
 void emuUserInputEventHandler(uint8_t in_device_number, sysUserInputEventCategory in_event_category, sysUserInputEventType in_event_type, uint32_t in_event_param);
 void emuReset(void);
 void emuNMI(void);
+void emuDisableScreenRefresh(uint8_t in_left, uint8_t in_top, uint8_t in_right, uint8_t in_bottom);
+void emuEnableScreenRefresh(uint8_t in_left, uint8_t in_top, uint8_t in_right, uint8_t in_bottom);
 
 void emuHT1080StartScreenRefresh(void);
 void emuHT1080EndScreenrefresh(void);
